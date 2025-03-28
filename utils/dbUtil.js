@@ -178,15 +178,7 @@ export async function validateSessionToken(token) {
         console.error("Error validating session code:", error);
         return false;
     }
-} 
-
-
-// ime: { type: String },
-// prezime: { type: String },
-// mail: { type: String },
-// pfp: { type: String },
-// accountType: { type: String },
-// tags: { type: String },
+}
 
 export async function updateUser(userId, updateData) {
     try {
@@ -258,6 +250,8 @@ export async function createUser(
     if(prezime.length == 0 || ime.length > 16) {
         return { status: 400, message: "Invalid name" };
     }
+
+    if(await findUserByMail(mail)){ return { status: 400, message: "User exists" }; }
 
 	const newUser = new User({
 		ime: sanitize(ime),
