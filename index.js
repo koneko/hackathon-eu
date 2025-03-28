@@ -16,4 +16,4 @@ app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
 });
 
-dbUtil.createUser()
+dbUtil.createUser("Marko", "Markic", "marko@mail.com", "Student", ["c#", "C++"])

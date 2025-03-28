@@ -14,8 +14,20 @@ const Profil = mongoose.model("Profil", profilSchema);
 const Connection = mongoose.model("Connection", connectionsSchema);
 const Partnered = mongoose.model("Partnered", partneredSchema);
 
+function sanitizeHTML(str) {
+    return str.replace(/[&<>"']/g, function (match) {
+        return ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        })[match];
+    });
+}
+
 function sanitizeList(stringArray) {
-	return stringArray.map((str) => sanitize.sanitize(str));
+	return stringArray.map((str) => sanitizeHTML(str));
 }
 
 export async function connect() {
@@ -46,11 +58,11 @@ export async function createUser(
 	}
 
 	const newUser = new User({
-		ime: sanitize.sanitize(ime),
-		prezime: sanitize.sanitize(prezime),
+		ime: sanitize(ime),
+		prezime: sanitize(prezime),
 		mail: mail,
-		tags: sanitizeList(tags),
-		accountType: sanitize.sanitize(accountType),
+		tags: JSON.stringify(sanitizeList(tags)),
+		accountType: sanitize(accountType),
 		pfp: pfp, // uri
 	});
 
