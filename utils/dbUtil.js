@@ -293,11 +293,7 @@ export async function createUser(
 
 export async function findUserById(userId) {
     try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return null; // Or throw an error, depending on your needs.
-        }
-        return user;
+        return await User.findById(userId);
     } catch (error) {
         console.error('Error finding user:', error);
         throw error; // Rethrow the error for the calling function to handle.
@@ -306,15 +302,23 @@ export async function findUserById(userId) {
   
 export async function findUserByMail(mail) {
     try {
-        const foundUser = await User.findOne({
+        return await User.findOne({
             mail: mail,
         });
-
-        return foundUser;
-
     } catch (error) {
         console.error('Error finding user:', error);
         throw error; // Rethrow the error for the calling function to handle.
+    }
+}
+
+export async function getConnectionFromUserID(userID) {
+    try {
+        const connection = await Connection.findOne({ usr_id: userID });
+        return connection;
+    } catch (error) {
+        console.error('Error finding user:', error);
+        return false;
+        // throw error; // Rethrow the error for the calling function to handle.
     }
 }
 
