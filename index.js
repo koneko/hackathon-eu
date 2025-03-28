@@ -34,8 +34,11 @@ app.get("/testing", authenticateToken, async (req, res) => {
 // }
 
 app.post("/api/makeSession", async (req, res) => {
-	let name = req.body.name;
-	let lastName = req.body.lastName;
+	let user_id = req.body.user_id;
+	if(!!(await dbUtil.createSession(await dbUtil.findUserById(user_id)))){
+		return res.send(200);
+	}
+	return res.send(400);
 });
 
 app.post("/api/getAcc", async (req, res) => {
