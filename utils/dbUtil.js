@@ -320,6 +320,13 @@ export async function findUserByMail(mail) {
 
 export async function createConnection(connectionData) {
     try {
+
+        const connection = await Connection.findOne({ usr_id: updateData.usr_id });
+
+        if (connection) {
+            return { status: 400, message: 'Connection exists' };
+        }
+
         if (connectionData.mail && !validate.isEmail(connectionData.mail)) {
             return { status: 400, message: "Invalid mail" };
         }
