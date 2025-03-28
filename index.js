@@ -311,7 +311,6 @@ app.post("/api/add/profil", authenticateToken, async (req, res) => {
 	}
 });
 
-
 app.post("/api/get/profils", authenticateToken, async (req, res) => {
 	let limit = req.body.limit;
 	let profileType = req.body.profileType;
