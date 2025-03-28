@@ -23,6 +23,31 @@
 		<meta property="og:site_name" content="Fill later." />
 		<meta name="twitter:card" content="Fill later." />
 		<meta property="twitter:title" content="Fill later." />
+		<style>
+			#myUL {
+				list-style-type: none;
+				padding: 0;
+				margin: 0;
+			}
+			#myUL > li {
+				/* like a badge */
+				background-color: rgb(255, 179, 65);
+				color: white;
+				padding: 5px 10px;
+				border-radius: 5px;
+				font-size: 14px;
+				margin-left: 10px;
+			}
+
+			.single-tag {
+				/* like a badge */
+				background-color: rgb(255, 179, 65);
+				color: white;
+				padding: 5px 10px;
+				border-radius: 5px;
+				font-size: 14px;
+			}
+		</style>
 	</head>
 	<body>
 		<ul class="navbar">
@@ -38,8 +63,8 @@
 		</ul>
 		<main id="main">
 			<p>
-				Please input your email in the text box below to proceed. If you
-				do not already have an account, one will be created for you.
+				Please login via your email. If you do not already have an
+				account, one will be created for you.
 			</p>
 
 			<input
@@ -51,6 +76,25 @@
 			<button class="btn" onclick="submit()">Sign In</button>
 		</main>
 		<script>
+			function filterTags() {
+				// Declare variables
+				var input, filter, ul, li, a, i, txtValue;
+				input = document.getElementById("myInput");
+				filter = input.value.toUpperCase();
+				ul = document.getElementById("myUL");
+				li = ul.getElementsByTagName("li");
+
+				// Loop through all list items, and hide those who don't match the search query
+				for (i = 0; i < li.length; i++) {
+					a = li[i].getElementsByTagName("a")[0];
+					txtValue = a.textContent || a.innerText;
+					if (txtValue.toUpperCase().indexOf(filter) > -1) {
+						li[i].style.display = "";
+					} else {
+						li[i].style.display = "none";
+					}
+				}
+			}
 			function login() {
 				const codeArray = [
 					document.getElementById("1").value,
@@ -85,10 +129,10 @@
 					})
 						.then((res) => res.json())
 						.then(async (res) => {
+							// account exists
 							let userid = res.user_id;
-							if (userid != undefined) {
-								localStorage.setItem("STAR_user_id", userid);
-								document.getElementById("main").innerHTML = `
+							localStorage.setItem("STAR_user_id", userid);
+							document.getElementById("main").innerHTML = `
 								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved into the boxes below.</p>
 								<input id="1"/>
 								<input id="2"/>
@@ -98,8 +142,29 @@
 								<input id="6"/><br>
 								<button class="btn" onclick="login()">Send</button>
 								`;
-							} else {
-							}
+						})
+						.catch(() => {
+							// account doesnt exist
+							document.getElementById("main").innerHTML = `
+							<p>Tell us some more information about you.</p>
+							<input id="name" placeholder="Name" />
+							<input id="surname" placeholder="Surname" />
+							<p>Are you a student or a teacher?</p>
+							<select><option value="0">Student</option> <option value="1">Teacher</option> </select>
+							<p>Choose atleast one and up to 10 tags to learn/teach.</p>
+							 <input type="text" id="myInput" onkeyup="filterTags()" placeholder="Search for tags...">
+<ul id="myUL">
+  <li><a href="#">Chemistry</a></li>
+  <li><a href="#">Biology</a></li>
+
+  <li><a href="#">C#</a></li>
+  <li><a href="#">C</a></li>
+
+  <li><a href="#">C++</a></li>
+  <li><a href="#">Javascript</a></li>
+  <li><a href="#">Web Development</a></li>
+</ul>
+							`;
 						});
 				} else {
 					alert("Please input a valid email address.");
