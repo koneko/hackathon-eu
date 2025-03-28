@@ -4,6 +4,14 @@ import * as dbUtil from "./utils/dbUtil.js"
 const app = express();
 const port = process.env.port || 3000;
 
+async function authenticateToken(req, res, next) {
+    let token = req.headers?.authorization;
+    if (!token || !(await dbUtil.validateSessionToken(token))) {
+        return res.redirect("/account/login");
+    }
+    next();
+}
+
 app.use(express.static("public"));
 app.use(express.json());
 
@@ -13,10 +21,7 @@ app.get("/", (req, res) => {
 	res.send("Hello, World");
 });
 
-app.get("/testing", async (req, res) => {
-	let token = req.headers?.authorization;
-	if(!token) { return res.send(403); }
-	if(!await dbUtil.validateSessionToken(token)) { return res.redirect("/account/login"); }
+app.get("/testing", authenticateToken, async (req, res) => {
 	res.send("Token good!");
 });
 
