@@ -16,7 +16,7 @@ const Profil = mongoose.model("Profil", profilSchema);
 const Connection = mongoose.model("Connection", connectionsSchema);
 const Partnered = mongoose.model("Partnered", partneredSchema);
 
-const mailConfig = JSON.parse(fs.readFileSync("../mail.json", 'utf8'));
+const mailConfig = JSON.parse(fs.readFileSync("./mail.json", 'utf8'));
 
 const mygmail = mailConfig.username
 let transporter = nodemailer.createTransport({
@@ -60,7 +60,7 @@ export async function connect() {
 
 async function sendEmail(recipient, subject, mail_code) {
     try { 
-      const data = fs.readFileSync("../public/mailCode.html", 'utf8');
+      const data = fs.readFileSync("./public/mailCode.html", 'utf8');
       // send mail with defined transport object
       let info = await transporter.sendMail({
         from: mygmail, // sender address
