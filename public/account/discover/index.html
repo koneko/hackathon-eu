@@ -34,45 +34,6 @@
 				<a href="/account" id="account-label">Account</a>
 			</li>
 		</ul>
-		<main>
-			<p>
-				Please input your email in the text box below to proceed. If you
-				do not already have an account, one will be created for you.
-			</p>
-
-			<input
-				type="text"
-				placeholder="johndoe@gmail.com"
-				id="email"
-				class="input"
-			/>
-			<button class="btn" onclick="submit()">Sign In</button>
-		</main>
-		<script>
-			function submit() {
-				const email = document.getElementById("email").value;
-				const emailRegex =
-					/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-				if (emailRegex.test(email)) {
-					fetch("/api/getAcc", {
-						method: "POST",
-						body: `{"mail":"${email}"}`,
-					}).then((res) => {
-						if (res.status == 200) {
-							fetch("/api/makeSession", {
-								method: "POST",
-								body: {},
-							});
-						} else {
-						}
-						document.body.main.innerHTML = `
-						<p>Check</p>
-						`;
-					});
-				} else {
-					alert("Please input a valid email address.");
-				}
-			}
-		</script>
+		<main></main>
 	</body>
 </html>
