@@ -1,0 +1,48 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+ul {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	background-color: rgb(255, 179, 65);
+	/* add drop shadow */
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+	position: fixed;
+	top: 0;
+	width: 100%;
+}
+
+li {
+	text-align: center;
+	float: left;
+}
+
+li a {
+	display: block;
+	color: white;
+	padding: 14px 16px;
+	text-decoration: none;
+}
+
+li a:hover {
+	background-color: rgb(255, 167, 35);
+	color: white;
+}
+
+main {
+	margin-top: 50px;
+	padding: 1em;
+	overflow: hidden;
+	text-align: center;
+}
+
+.right-align-nav {
+	float: right;
+}

@@ -1,0 +1,79 @@
+* {
+	box-sizing: border-box;
+}
+html,
+body {
+	padding: 0;
+	margin: 0;
+}
+
+body,
+html {
+	width: 100%;
+}
+a {
+	text-decoration: none;
+	color: rgb(255, 179, 65);
+}
+
+a:hover {
+	color: rgb(253, 163, 29);
+}
+
+.small {
+	font-size: 14px;
+}
+
+.extra-small {
+	font-size: 12px;
+}
+
+.muted {
+	color: gray;
+}
+
+.btn {
+	background-color: rgb(255, 179, 65);
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.btn:hover {
+	background-color: rgb(253, 163, 29);
+}
+
+.input {
+	border: 1px solid rgb(255, 179, 65);
+	border-radius: 5px;
+	padding: 10px;
+	font-size: 16px;
+}
+
+.shadow {
+	-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+.tag {
+	/* like a badge */
+	background-color: rgb(255, 179, 65);
+	color: white;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-size: 14px;
+	margin-left: 10px;
+}
+
+.single-tag {
+	/* like a badge */
+	background-color: rgb(255, 179, 65);
+	color: white;
+	padding: 5px 10px;
+	border-radius: 5px;
+	font-size: 14px;
+}
