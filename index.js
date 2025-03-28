@@ -144,8 +144,12 @@ app.post("/api/makeAccount", async (req, res) => {
 });
 
 app.post("/api/verify/mailcode", async (req, res) => {
-	let mail_code = req.body.mail.mail_code;
-	let user_id = req.body.mail.user_id;
+	let mail_code = req.body.mail?.mail_code;
+	let user_id = req.body.mail?.user_id;
+
+	if(!mail_code || !user_id) {
+		return res.send(400);
+	}
 
 	try {
 		if (await dbUtil.validateEmailCode(user_id, mail_code)) {
@@ -312,8 +316,12 @@ app.post("/api/add/profil", authenticateToken, async (req, res) => {
 });
 
 app.post("/api/get/profils", authenticateToken, async (req, res) => {
-	let limit = req.body.limit;
-	let profileType = req.body.profileType;
+	let limit = req.body?.limit;
+	let profileType = req.body?.profileType;
+
+	if(!limit || !profileType) {
+		return res.send(400);
+	}
 
 	if(limit > 100) {
 		return res.send(400);
