@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 
-export const profilSchema = new mongoose.Schema({
+const profilSchema = new mongoose.Schema({
     profil_id: { type: String, required: true, unique: true, default: uuidv4 },
     title: { type: String },
     desc: { type: String },
@@ -10,3 +10,5 @@ export const profilSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now },
     usr_id: { type: String, ref: 'User' }, // Reference to User model
 });
+
+export default profilSchema;

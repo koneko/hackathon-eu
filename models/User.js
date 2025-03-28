@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { v4 as uuidv4 } from 'uuid';
 
-export const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
 	usr_id: { type: String, required: true, unique: true, default: uuidv4 },
 	ime: { type: String },
 	prezime: { type: String },
@@ -11,3 +11,4 @@ export const userSchema = new mongoose.Schema({
 	tags: { type: String },
 	created_at: { type: Date, default: Date.now },
 });
+export default userSchema;
