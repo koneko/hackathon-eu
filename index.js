@@ -14,12 +14,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/testing", async (req, res) => {
-	// let usr = await dbUtil.createUser("Marko", "Markic", "marko@mail.com", "Student", ["c#", "C++"]);
-	// let kita2 = await dbUtil.createSession(usr);
-	// let kita = (await dbUtil.validateEmailCode(usr.usr_id, kita2.mail_code)).toString()
 	let token = req.headers?.authorization;
 	if(!token) { return res.send(403); }
-	if(!await dbUtil.validateSessionToken(token)) { return res.send(403); }
+	if(!await dbUtil.validateSessionToken(token)) { return res.redirect("/account/login"); }
 	res.send("Token good!");
 });
 
