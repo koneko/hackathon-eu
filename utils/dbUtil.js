@@ -119,7 +119,7 @@ export async function createSession(user) {
         return error
     }
 
-    // if(!sendEmail(mail, "Account Verification", `code: ${mail_code}`)){
+    // if(!sendEmail(mail, "Account Verification", mail_code.toString)){
     //     return null
     // }
 
@@ -180,6 +180,65 @@ export async function validateSessionToken(token) {
     }
 } 
 
+
+// ime: { type: String },
+// prezime: { type: String },
+// mail: { type: String },
+// pfp: { type: String },
+// accountType: { type: String },
+// tags: { type: String },
+
+export async function updateUser(userId, updateData) {
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            return { status: 404, message: 'User not found' };
+        }
+
+        // Validate and sanitize update data
+        if (updateData.ime !== undefined) {
+            if (updateData.ime.length === 0 || updateData.ime.length > 16) {
+                return { status: 400, message: "Invalid name" };
+            }
+            user.ime = sanitize(updateData.ime);
+        }
+
+        if (updateData.prezime !== undefined) {
+            if (updateData.prezime.length === 0 || updateData.prezime.length > 16) {
+                return { status: 400, message: "Invalid last name" };
+            }
+            user.prezime = sanitize(updateData.prezime);
+        }
+
+        if (updateData.mail !== undefined) {
+            if (!validate.isEmail(updateData.mail)) {
+                return { status: 400, message: "Invalid mail" };
+            }
+            user.mail = updateData.mail;
+        }
+
+        if (updateData.accountType !== undefined) {
+            user.accountType = sanitize(updateData.accountType);
+        }
+
+        if (updateData.tags !== undefined) {
+            user.tags = JSON.stringify(sanitizeList(updateData.tags));
+        }
+
+        if (updateData.pfp !== undefined) {
+            user.pfp = updateData.pfp;
+        }
+
+        await user.save();
+        return user;
+
+    } catch (error) {
+        console.error('Error updating user:', error);
+        return { status: 500, message: 'Internal server error' };
+    }
+}
+
 export async function createUser(
 	ime,
 	prezime,
@@ -228,7 +287,19 @@ export async function findUserById(userId) {
     }
 }
   
+export async function findUserByMail(mail) {
+    try {
+        const foundUser = await User.findOne({
+            mail: mail,
+        });
 
+        return !!foundUser;
+
+    } catch (error) {
+        console.error('Error finding user:', error);
+        throw error; // Rethrow the error for the calling function to handle.
+    }
+}
 
 
 // export async function createUser(ime, prezime, mail, accountType, tags=[], pfp=null) {

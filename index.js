@@ -33,6 +33,21 @@ app.get("/testing", authenticateToken, async (req, res) => {
 // 	"tags": []
 // }
 
+app.post("/api/makeSession", async (req, res) => {
+	let name = req.body.name;
+	let lastName = req.body.lastName;
+});
+
+app.post("/api/getAcc", async (req, res) => {
+	let mail = req.body.mail; // {"mail": "mail@gmail.com"}
+
+	if(await dbUtil.findUserByMail(mail)){
+		return res.send(200);
+	};
+	return res.send(400);
+});
+
+
 app.post("/api/makeAccount", async (req, res) => {
 	let name = req.body.name;
 	let lastName = req.body.lastName;
