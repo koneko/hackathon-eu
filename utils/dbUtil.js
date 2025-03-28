@@ -7,14 +7,12 @@ import userSchema from "../models/User.js";
 import sessionSchema from "../models/UserSession.js";
 import profilSchema from "../models/Profil.js";
 import connectionsSchema from "../models/Connections.js";
-import partneredSchema from "../models/partnered.js";
 
 // init
 const User = mongoose.model("User", userSchema);
 const Session = mongoose.model("Session", sessionSchema);
 const Profil = mongoose.model("Profil", profilSchema);
 const Connection = mongoose.model("Connection", connectionsSchema);
-const Partnered = mongoose.model("Partnered", partneredSchema);
 
 const mailConfig = JSON.parse(fs.readFileSync("./mail.json", "utf8"));
 

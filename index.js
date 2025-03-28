@@ -321,26 +321,7 @@ app.post("/api/get/profils", authenticateToken, async (req, res) => {
 	}
 
 	res.json(await dbUtil.getProfils(limit));
-
-	// try {
-	// 	let upd = await dbUtil.createProfil(
-	// 		updateData.userid,
-	// 		updateData.title,
-	// 		updateData.desc,
-	// 		updateData.profileType,
-	// 		updateData.tags
-	// 	);
-	// 	if (!upd) {
-	// 		return res.send(400);
-	// 	}
-	// 	return res.send(upd);
-	// } catch {
-	// 	return res.send(400);
-	// }
 });
-
-
-//
 
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
