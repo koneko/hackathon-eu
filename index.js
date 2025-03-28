@@ -43,9 +43,9 @@ app.post("/api/makeSession", async (req, res) => {
 
 app.post("/api/getAcc", async (req, res) => {
 	let mail = req.body.mail; // {"mail": "mail@gmail.com"}
-
-	if(await dbUtil.findUserByMail(mail)){
-		return res.send(200);
+	let usr = await dbUtil.findUserByMail(mail)
+	if(!!usr){
+		return res.json({"user_id": usr.usr_id});
 	};
 	return res.send(400);
 });

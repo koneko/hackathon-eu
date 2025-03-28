@@ -287,7 +287,7 @@ export async function findUserByMail(mail) {
             mail: mail,
         });
 
-        return !!foundUser;
+        return foundUser;
 
     } catch (error) {
         console.error('Error finding user:', error);
