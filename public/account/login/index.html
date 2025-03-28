@@ -135,8 +135,8 @@
 				}
 			}
 			function createAccount() {
-				let name = document.getElementById("name");
-				let lastname = document.getElementById("surname");
+				let name = document.getElementById("name").value;
+				let lastname = document.getElementById("surname").value;
 				let accType = document.getElementById("acctype").value;
 				if (accType == 0) {
 					accType = "Student";
@@ -145,15 +145,24 @@
 				}
 				apiCreateAccount(name, lastname, email, accType, tags);
 			}
-			function apiCreateAccount(name, lastName, mail, accType, tags) {
+			function apiCreateAccount(
+				name2,
+				lastName2,
+				mail2,
+				accType2,
+				tags2
+			) {
 				fetch("/api/makeAccount", {
 					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
 					body: JSON.stringify({
-						name,
-						lastName,
-						mail,
-						accType,
-						tags,
+						name: name2,
+						lastName: lastName2,
+						mail: mail2,
+						accType: accType2,
+						tags: tags2,
 					}),
 				});
 			}
