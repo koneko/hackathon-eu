@@ -293,7 +293,9 @@ export async function createUser(
 
 export async function findUserById(userId) {
 	try {
-		return await User.findById(userId);
+		return await User.findOne({
+			usr_id: userId,
+		});
 	} catch (error) {
 		console.error("Error finding user:", error);
 		throw error; // Rethrow the error for the calling function to handle.
