@@ -145,7 +145,18 @@
 				}
 				apiCreateAccount(name, lastname, email, accType, tags);
 			}
-			function apiCreateAccount(name, lastName, mail, accType, tags) {}
+			function apiCreateAccount(name, lastName, mail, accType, tags) {
+				fetch("/api/makeAccount", {
+					method: "POST",
+					body: JSON.stringify({
+						name,
+						lastName,
+						mail,
+						accType,
+						tags,
+					}),
+				});
+			}
 			function submit() {
 				email = document.getElementById("email").value;
 				const emailRegex =
