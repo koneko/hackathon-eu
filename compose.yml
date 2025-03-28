@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+    app:
+        image: node:latest
+        container_name: app-container
+        ports:
+            - "3000:3000"
+        volumes:
+            - .:/usr/src/app
+            - ./pictures:/usr/src/app/pictures
+        working_dir: /usr/src/app
+        develop:
+            watch:
+                - action: sync
+                  path: ./
+                  target: /usr/src/app
+                  ignore:
+                      - node_modules/
+                # - action: rebuild
+                #   path: ./package.json
+        command: bash -c "npm install && npm run dev"
+        stdin_open: true
+        tty: true
+        restart: unless-stopped
+
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb-container
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongodb_data:/data/db
+        # stdout_open: false
+
+volumes:
+    mongodb_data:
