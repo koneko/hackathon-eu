@@ -21,8 +21,15 @@ app.get("/", (req, res) => {
 	res.send("Hello, World");
 });
 
-app.get("/testing", authenticateToken, async (req, res) => {
-	res.send("Token good!");
+app.post("/api/verify/session", async (req, res) => {
+	let user_id = req.body.user_id;
+	let session_id = req.body.session_id;
+
+	if(!await dbUtil.validateSessionToken(session_id))  { return res.send(400); }
+	let usr_id = await dbUtil.session2userID(session_id)
+	if(usr_id != user_id) { return res.send(400); }
+
+	return res.send(200);
 });
 
 // {
@@ -50,6 +57,39 @@ app.post("/api/getAcc", async (req, res) => {
 	return res.send(400);
 });
 
+app.post("/api/update/user", authenticateToken, async (req, res) => {
+	let user_id = req.body.user_id;
+	let updateData = req.body.updateData;
+
+	try{
+		let upd = await dbUtil.updateUser(user_id, updateData);
+		if(!upd) { return res.send(400); }
+		return res.send(upd.status);
+	} catch {
+		return res.send(400);
+	}
+});
+
+app.post("/api/update/connections", authenticateToken, async (req, res) => {
+	let sesh_id = req.headers.authorization;
+	let updateData = req.body.updateData;
+
+	let user_id = await dbUtil.session2userID(sesh_id);
+	if(!user_id) { return res.send(400); };
+	updateData.usr_id = user_id;
+
+	try{
+		let upd = await dbUtil.updateConnection(updateData);
+		if(!upd) { return res.send(400); }
+		return res.send(upd.status);
+	} catch {
+		return res.send(400);
+	}
+});
+
+// app.post("/api/update/connections", async (req, res) => {
+
+// });
 
 app.post("/api/makeAccount", async (req, res) => {
 	let name = req.body.name;

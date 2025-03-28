@@ -157,6 +157,29 @@ export async function validateEmailCode(userID, code) {
     }
 }
 
+export async function session2userID(token) {
+    try {
+        const foundSession = await Session.findOne({
+            session_id: token,
+        });
+
+        if(!foundSession) {
+            return false;
+        }
+
+        if(isDateMoreThan5MinutesOld(foundSession.created_at)){
+            removeSession(foundSession)
+            return false;
+        }
+
+        return foundSession.usr_id;
+
+    } catch (error) {
+        console.error("Error validating session code:", error);
+        return false;
+    }
+}
+
 export async function validateSessionToken(token) {
     try {
         const foundSession = await Session.findOne({
@@ -223,7 +246,7 @@ export async function updateUser(userId, updateData) {
         }
 
         await user.save();
-        return user;
+        return { status: 200, message: 'User Updated' };
 
     } catch (error) {
         console.error('Error updating user:', error);
@@ -295,28 +318,93 @@ export async function findUserByMail(mail) {
     }
 }
 
+export async function createConnection(connectionData) {
+    try {
+        if (connectionData.mail && !validate.isEmail(connectionData.mail)) {
+            return { status: 400, message: "Invalid mail" };
+        }
 
-// export async function createUser(ime, prezime, mail, accountType, tags=[], pfp=null) {
+        const newConnection = new Connection({
+            mail: connectionData.mail ? sanitize(connectionData.mail) : null,
+            discord: connectionData.discord ? sanitize(connectionData.discord) : null,
+            phone: connectionData.phone ? sanitize(connectionData.phone) : null,
+            telegram: connectionData.telegram ? sanitize(connectionData.telegram) : null,
+            linkedin: connectionData.linkedin ? sanitize(connectionData.linkedin) : null,
+            wa_bis: connectionData.wa_bis ? sanitize(connectionData.wa_bis) : null,
+            viber: connectionData.viber ? sanitize(connectionData.viber) : null,
+            instagram: connectionData.instagram ? sanitize(connectionData.instagram) : null,
+            github: connectionData.github ? sanitize(connectionData.github) : null,
+            teams: connectionData.teams ? sanitize(connectionData.teams) : null,
+            usr_id: connectionData.usr_id,
+        });
 
-//     if(!sanitize.validateEmail(mail)) { return {"status": 400, "message": "Invalid mail"} }
+        await newConnection.save();
+        return newConnection;
+    } catch (error) {
+        console.error('Error creating connection:', error);
+        return { status: 500, message: 'Internal server error' };
+    }
+}
 
-//     const newUser = new User({
-//         ime: sanitize.sanitize(ime),
-//         prezime: sanitize.sanitize(prezime),
-//         mail: mail,
-//         tags: sanitizeList(tags),
-//         accountType: sanitize.sanitize(accountType),
-//         pfp: pfp // uri
-//     });
+export async function updateConnection(updateData) {
+    try {
+        const connection = await Connection.findOne({ usr_id: updateData.usr_id });
 
-//     await newUser.save();
-// }
+        if (!connection) {
+            return { status: 404, message: 'Connection not found' };
+        }
 
-// // explorable
-// const newProfil = new Profil({
-//     title: "example profil",
-//     desc: "this is an example profil",
-//     profileType: "student",
-//     usr_id: newUser
-// })
-// await newProfil.save();
+        if (updateData.mail !== undefined) {
+            if (updateData.mail && !validate.isEmail(updateData.mail)) {
+                return { status: 400, message: "Invalid mail" };
+            }
+            connection.mail = updateData.mail ? sanitize(updateData.mail) : null;
+        }
+
+        if (updateData.discord !== undefined) {
+            connection.discord = updateData.discord ? sanitize(updateData.discord) : null;
+        }
+
+        if (updateData.phone !== undefined) {
+            connection.phone = updateData.phone ? sanitize(updateData.phone) : null;
+        }
+
+        if (updateData.telegram !== undefined) {
+            connection.telegram = updateData.telegram ? sanitize(updateData.telegram) : null;
+        }
+
+        if (updateData.linkedin !== undefined) {
+            connection.linkedin = updateData.linkedin ? sanitize(updateData.linkedin) : null;
+        }
+
+        if (updateData.wa_bis !== undefined) {
+            connection.wa_bis = updateData.wa_bis ? sanitize(updateData.wa_bis) : null;
+        }
+
+        if (updateData.viber !== undefined) {
+            connection.viber = updateData.viber ? sanitize(updateData.viber) : null;
+        }
+
+        if (updateData.instagram !== undefined) {
+            connection.instagram = updateData.instagram ? sanitize(updateData.instagram) : null;
+        }
+
+        if (updateData.github !== undefined) {
+            connection.github = updateData.github ? sanitize(updateData.github) : null;
+        }
+
+        if (updateData.teams !== undefined) {
+            connection.teams = updateData.teams ? sanitize(updateData.teams) : null;
+        }
+
+        if (updateData.usr_id !== undefined) {
+            connection.usr_id = updateData.usr_id;
+        }
+
+        await connection.save();
+        return connection;
+    } catch (error) {
+        console.error('Error updating connection:', error);
+        return { status: 500, message: 'Internal server error' };
+    }
+}
