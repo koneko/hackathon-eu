@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hackathon App</title>
+		<title>Students & Teachers Achieving Results</title>
 		<link rel="stylesheet" href="/css/navbar.css" />
 		<link rel="stylesheet" href="/css/general.css" />
 		<script
@@ -27,7 +27,9 @@
 	<body>
 		<ul class="navbar">
 			<li>
-				<a href="/" style="font-weight: bold">Hackathon EU</a>
+				<a href="/" style="font-weight: bold"
+					>Students & Teachers Achieving Results</a
+				>
 			</li>
 			<li><a href="/discover">Discover</a></li>
 			<li style="float: right">
@@ -36,4 +38,19 @@
 		</ul>
 		<main></main>
 	</body>
+	<script>
+		let user_id = localStorage.getItem("STAR_user_id");
+		let session_id = localStorage.getItem("STAR_session_id");
+		fetch("/api/verify/session", {
+			method: "POST",
+			body: JSON.stringify({
+				user_id,
+				session_id,
+			}),
+		}).then((res) => {
+			if (res.status != 200) {
+				window.location.href = "/account/login";
+			}
+		});
+	</script>
 </html>

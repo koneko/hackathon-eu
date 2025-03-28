@@ -4,7 +4,7 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Hackathon App</title>
+		<title>Students & Teachers Achieving Results</title>
 		<link rel="stylesheet" href="/css/navbar.css" />
 		<link rel="stylesheet" href="/css/general.css" />
 		<script
@@ -27,14 +27,16 @@
 	<body>
 		<ul class="navbar">
 			<li>
-				<a href="/" style="font-weight: bold">Hackathon EU</a>
+				<a href="/" style="font-weight: bold"
+					>Students & Teachers Achieving Results</a
+				>
 			</li>
 			<li><a href="/discover">Discover</a></li>
 			<li style="float: right">
 				<a href="/account" id="account-label">Account</a>
 			</li>
 		</ul>
-		<main>
+		<main id="main">
 			<p>
 				Please input your email in the text box below to proceed. If you
 				do not already have an account, one will be created for you.
@@ -49,6 +51,29 @@
 			<button class="btn" onclick="submit()">Sign In</button>
 		</main>
 		<script>
+			function login() {
+				const codeArray = [
+					document.getElementById("1").value,
+					document.getElementById("2").value,
+					document.getElementById("3").value,
+					document.getElementById("4").value,
+					document.getElementById("5").value,
+					document.getElementById("6").value,
+				];
+				const code = codeArray.join("");
+				fetch("/api/verify/mailcode", {
+					method: "POST",
+					body: JSON.stringify({
+						user_id: localStorage.getItem("STAR_user_id"),
+						mail_code: code,
+					}),
+				})
+					.then((res) => res.json())
+					.then((res) => {
+						localStorage.setItem("STAR_session_id", res.session_id);
+					});
+			}
+			function createAccount(name, lastName, mail, accType, tags) {}
 			function submit() {
 				const email = document.getElementById("email").value;
 				const emailRegex =
@@ -57,18 +82,25 @@
 					fetch("/api/getAcc", {
 						method: "POST",
 						body: `{"mail":"${email}"}`,
-					}).then((res) => {
-						if (res.status == 200) {
-							fetch("/api/makeSession", {
-								method: "POST",
-								body: {},
-							});
-						} else {
-						}
-						document.body.main.innerHTML = `
-						<p>Check</p>
-						`;
-					});
+					})
+						.then((res) => res.json())
+						.then(async (res) => {
+							let userid = res.user_id;
+							if (userid != undefined) {
+								localStorage.setItem("STAR_user_id", userid);
+								document.getElementById("main").innerHTML = `
+								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved into the boxes below.</p>
+								<input id="1"/>
+								<input id="2"/>
+								<input id="3"/>
+								<input id="4"/>
+								<input id="5"/>
+								<input id="6"/><br>
+								<button class="btn" onclick="login()">Send</button>
+								`;
+							} else {
+							}
+						});
 				} else {
 					alert("Please input a valid email address.");
 				}
