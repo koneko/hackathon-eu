@@ -1,7 +1,7 @@
 import { sanitize, validate } from "string-sanitizer";
-import { v4 as uuidv4 } from "uuid";
-import nodemailer from "nodemailer"
- 
+import nodemailer from "nodemailer";
+import fs from 'fs';
+
 import mongoose from "mongoose";
 import userSchema from "../models/User.js";
 import sessionSchema from "../models/UserSession.js";
@@ -57,14 +57,15 @@ export async function connect() {
 }
 
 async function sendEmail(recipient, subject, mail_code) {
-    try {  
+    try { 
+      const data = fs.readFileSync("../public/mailCode.html", 'utf8');
       // send mail with defined transport object
       let info = await transporter.sendMail({
         from: mygmail, // sender address
         to: recipient, // list of receivers
         subject: subject, // Subject line
         // text: text, // plain text body
-        html: `<b>code: ${mail_code}</b>`, // html body
+        html: data.replace("mail_code", mail_code),
       });
   
       console.log('Message sent: %s', info.messageId);
