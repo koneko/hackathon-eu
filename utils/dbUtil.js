@@ -419,3 +419,70 @@ export async function updateConnection(updateData) {
         return { status: 500, message: 'Internal server error' };
     }
 }
+
+export async function getProfilFromUserID(userID) {
+    try {
+        return await Profil.findOne({ usr_id: userID });
+    } catch (error) {
+        console.error('Error finding user:', error);
+        return false;
+        // throw error; // Rethrow the error for the calling function to handle.
+    }
+}
+
+export async function createProfil(userid, title, desc, profileType, tags) {
+    try {
+
+        const profil = await Profil.findOne({ usr_id: userid });
+
+        if (profil) {
+            return { status: 400, message: 'Profil exists' };
+        }
+
+        const newProfil = new Profil({
+            title: sanitizeHTML(title),
+            desc: sanitizeHTML(desc),
+            profileType: sanitizeHTML(profileType),
+            tags: JSON.stringify(sanitizeList(tags)),
+            usr_id: connectionData.usr_id,
+        });
+
+        await newProfil.save();
+        return newProfil;
+    } catch (error) {
+        console.error('Error creating newProfil:', error);
+        return { status: 500, message: 'Internal server error' };
+    }
+}
+
+export async function updateProfil(updateData) {
+    try {
+        const profil = await Profil.findOne({ usr_id: updateData.userid });
+
+        if (!profil) {
+            return { status: 404, message: 'profil not found' };
+        }
+
+        if (updateData.title !== undefined) {
+            profil.title = sanitizeHTML(updateData.title);
+        }
+
+        if (updateData.desc !== undefined) {
+            profil.desc = sanitizeHTML(updateData.desc);
+        }
+
+        if (updateData.profileType !== undefined) {
+            profil.profileType = sanitizeHTML(updateData.profileType);
+        }
+
+        if (updateData.tags !== undefined) {
+            profil.tags = JSON.stringify(sanitizeList(updateData.tags));
+        }
+
+        await profil.save();
+        return profil;
+    } catch (error) {
+        console.error('Error updating profil:', error);
+        return { status: 500, message: 'Internal server error' };
+    }
+}
