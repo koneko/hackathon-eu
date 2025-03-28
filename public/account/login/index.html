@@ -99,18 +99,14 @@
 					}
 				}
 			}
-			function login() {
-				const codeArray = [
-					document.getElementById("1").value,
-					document.getElementById("2").value,
-					document.getElementById("3").value,
-					document.getElementById("4").value,
-					document.getElementById("5").value,
-					document.getElementById("6").value,
-				];
-				const code = codeArray.join("");
+			function login(user_id) {
+				const code = document.getElementById("code");
+				console.log(code);
 				fetch("/api/verify/mailcode", {
 					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
 					body: JSON.stringify({
 						user_id: localStorage.getItem("STAR_user_id"),
 						mail_code: code,
@@ -164,36 +160,38 @@
 						accType: accType2,
 						tags: tags2,
 					}),
-				});
+				})
+					.then((req) => {
+						req.json();
+					})
+					.then((user) => {
+						console.log(user);
+						let user_id = user.user_id;
+						localStorage.setItem("STAR_user_id", user_id);
+						document.getElementById("main").innerHTML = `
+								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved into the boxes below.</p>
+								<input id="code"/><br>
+								<button class="btn" onclick="login('${user_id}')">Send</button>
+								`;
+					});
 			}
-			function submit() {
+			async function submit() {
 				email = document.getElementById("email").value;
 				const emailRegex =
 					/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 				if (emailRegex.test(email)) {
-					fetch("/api/getAcc", {
+					let req = await fetch("/api/getAcc", {
 						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
 						body: `{"mail":"${email}"}`,
-					})
-						.then((res) => res.json())
-						.then(async (res) => {
-							// account exists
-							let userid = res.user_id;
-							localStorage.setItem("STAR_user_id", userid);
-							document.getElementById("main").innerHTML = `
-								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved into the boxes below.</p>
-								<input id="1"/>
-								<input id="2"/>
-								<input id="3"/>
-								<input id="4"/>
-								<input id="5"/>
-								<input id="6"/><br>
-								<button class="btn" onclick="login()">Send</button>
-								`;
-						})
-						.catch(() => {
-							// account doesnt exist
-							document.getElementById("main").innerHTML = `
+					});
+					if (req.status == 400) {
+						let f = await fetch("/tags.json");
+						let x = await f.json();
+						// account doesnt exist
+						document.getElementById("main").innerHTML = `
 							<p>Tell us some more information about you.</p>
 							<input id="name" placeholder="Name" />
 							<input id="surname" placeholder="Surname" />
@@ -203,19 +201,31 @@
 							<input type="text" id="myInput" onkeyup="filterTags()" placeholder="Search for tags...">
 								<br>
 							<ul id="myUL">
-							<li onclick="tag('Chemistry')"><a>Chemistry</a></li>
-							<li onclick="tag('Biology')"><a>Biology</a></li>
-
-							<li onclick="tag('C#')"><a>C#</a></li>
-							<li onclick="tag('C')"><a>C</a></li>
-
-							<li onclick="tag('C++')"><a>C++</a></li>
-							<li onclick="tag('Javascript')"><a>Javascript</a></li>
-							<li onclick="tag('Web Development')"><a>Web Development</a></li>
 							</ul>
 							<button onclick='createAccount()'>Finish</button>
 							`;
+						x.forEach((tag) => {
+							document.getElementById(
+								"myUL"
+							).innerHTML += `<li onclick='tag("${tag}")'><a>${tag}</a></li>`;
 						});
+					} else {
+						let json = await req.json();
+						let user_id = json.user_id;
+						localStorage.setItem("STAR_user_id", user_id);
+						await fetch("/api/makeSession", {
+							method: "POST",
+							headers: {
+								"Content-Type": "application/json",
+							},
+							body: `{"user_id":"${user_id}"}`,
+						});
+						document.getElementById("main").innerHTML = `
+								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved into the boxes below.</p>
+								<input id="code"/><br>
+								<button class="btn" onclick="login('${user_id}')">Send</button>
+								`;
+					}
 				} else {
 					alert("Please input a valid email address.");
 				}
