@@ -313,14 +313,14 @@ app.post("/api/add/profil", authenticateToken, async (req, res) => {
 
 
 app.post("/api/get/profils", authenticateToken, async (req, res) => {
-	let sesh_id = req.headers.authorization;
 	let limit = req.body.limit;
+	let profileType = req.body.profileType;
 
 	if(limit > 100) {
 		return res.send(400);
 	}
 
-	res.json(await dbUtil.getProfils(limit));
+	res.json(await dbUtil.getProfils(profileType, limit));
 });
 
 app.listen(port, () => {

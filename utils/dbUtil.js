@@ -521,9 +521,9 @@ export async function updateProfil(updateData) {
 	}
 }
 
-export async function getProfils(n) {
+export async function getProfils(profileType, n) {
 	try {
-		const profils = await Profil.find().limit(n).exec();
+		const profils = await Profil.find({ profileType: profileType }).limit(n).exec();
 
 		if (!profils) {
 			return { status: 404, message: "profil not found" };
