@@ -13,6 +13,8 @@ async function authenticateToken(req, res, next) {
 }
 
 app.use(express.static("public"));
+app.use('/pictures', express.static(path.join(__dirname, 'pictures')));
+
 app.use(express.json());
 
 await dbUtil.connect()
@@ -135,6 +137,96 @@ app.post("/api/verify/mailcode", async (req, res) => {
 		return res.send(400);
 	}
 });
+
+app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
+
+
+	// const form = document.getElementById('uploadForm');
+    // const messageDiv = document.getElementById('message');
+    // const imagePreviewDiv = document.getElementById('imagePreview');
+    // const imageInput = document.getElementById('image');
+
+    // imageInput.addEventListener('change', () => {
+    //   const file = imageInput.files[0];
+    //   if (file) {
+    //     const reader = new FileReader();
+    //     reader.onload = (e) => {
+    //       imagePreviewDiv.innerHTML = `<img src="${e.target.result}" style="max-width: 200px; max-height: 200px;">`;
+    //     };
+    //     reader.readAsDataURL(file);
+    //   } else {
+    //     imagePreviewDiv.innerHTML = ''; // Clear preview if no file selected
+    //   }
+    // });
+
+    // form.addEventListener('submit', async (event) => {
+    //   event.preventDefault();
+
+    //   const formData = new FormData(form);
+
+    //   try {
+    //     const response = await fetch('/upload', { // Ensure your backend endpoint is '/upload'
+    //       method: 'POST',
+    //       body: formData,
+    //     });
+
+    //     if (response.ok) {
+    //       messageDiv.textContent = 'Image uploaded successfully!';
+    //     } else {
+    //       const errorText = await response.text();
+    //       messageDiv.textContent = `Upload failed: ${errorText}`;
+    //     }
+    //   } catch (error) {
+    //     console.error('Error uploading image:', error);
+    //     messageDiv.textContent = 'An error occurred during upload.';
+    //   }
+    // });
+
+
+	let body = '';
+
+	req.on('data', chunk => {
+		body += chunk;
+	});
+  
+	req.on('end', () => {
+		try {
+			const boundary = body.split('\r\n')[0].slice(2);
+			const parts = body.split(`--${boundary}`);
+			const filePart = parts[1];
+
+			if (!filePart) {
+				return res.status(400).send('No file uploaded.');
+			}
+
+			const filenameMatch = filePart.match(/filename="(.+?)"/);
+			if (!filenameMatch) {
+				return res.status(400).send('Invalid file data.');
+			}
+
+			const filename = filenameMatch[1];
+			const fileDataStart = filePart.indexOf('\r\n\r\n') + 4;
+			const fileDataEnd = filePart.lastIndexOf('\r\n');
+			const fileData = filePart.slice(fileDataStart, fileDataEnd);
+
+			const filePath = path.join(__dirname, 'pictures', filename);
+
+			fs.mkdirSync(path.join(__dirname, 'pictures'), { recursive: true }); // Ensure directory exists
+
+			fs.writeFile(filePath, Buffer.from(fileData, 'binary'), err => {
+				if (err) {
+				console.error(err);
+				return res.status(500).send('Error saving file.');
+				}
+				res.send('File uploaded successfully!');
+			});
+		} catch (error) {
+			console.error(error);
+			res.status(500).send('An error occurred during file processing.');
+		}
+	});
+});
+
 
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
