@@ -119,9 +119,9 @@ export async function createSession(user) {
         return error
     }
 
-    if(!sendEmail(mail, "Account Verification", `code: ${mail_code}`)){
-        return null
-    }
+    // if(!sendEmail(mail, "Account Verification", `code: ${mail_code}`)){
+    //     return null
+    // }
 
     const newSession = new Session({
         usr_id: user.usr_id,
@@ -157,11 +157,10 @@ export async function validateEmailCode(userID, code) {
     }
 }
 
-export async function validateSessionToken(userID, token) {
+export async function validateSessionToken(token) {
     try {
         const foundSession = await Session.findOne({
             session_id: token,
-            usr_id: userID,
         });
 
         if(!foundSession) {
@@ -180,7 +179,6 @@ export async function validateSessionToken(userID, token) {
         return false;
     }
 } 
-
 
 export async function createUser(
 	ime,
@@ -212,7 +210,7 @@ export async function createUser(
 	});
 
 	await newUser.save();
-    return newUser();
+    return newUser;
     // const session = await createSession(newUser);
     // return [newUser, session]
 }
