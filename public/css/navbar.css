@@ -9,7 +9,7 @@ ul {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
-	background-color: rgb(255, 179, 65);
+	background-color: rgb(59, 179, 235);
 	/* add drop shadow */
 	-webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
 	-moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
@@ -32,7 +32,7 @@ li a {
 }
 
 li a:hover {
-	background-color: rgb(255, 167, 35);
+	background-color: rgb(55, 169, 221);
 	color: white;
 }
 
