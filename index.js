@@ -87,9 +87,23 @@ app.post("/api/update/connections", authenticateToken, async (req, res) => {
 	}
 });
 
-// app.post("/api/update/connections", async (req, res) => {
+app.post("/api/add/connections", authenticateToken, async (req, res) => {
+	let sesh_id = req.headers.authorization;
+	let updateData = req.body.updateData;
 
-// });
+	let user_id = await dbUtil.session2userID(sesh_id);
+	if(!user_id) { return res.send(400); };
+	updateData.usr_id = user_id;
+
+	try{
+		let upd = await dbUtil.updateConnection(updateData);
+		if(!upd) { return res.send(400); }
+		return res.send(upd.status);
+	} catch {
+		return res.send(400);
+	}
+});
+
 
 app.post("/api/makeAccount", async (req, res) => {
 	let name = req.body.name;
