@@ -16,12 +16,14 @@ const Profil = mongoose.model("Profil", profilSchema);
 const Connection = mongoose.model("Connection", connectionsSchema);
 const Partnered = mongoose.model("Partnered", partneredSchema);
 
-const mygmail = "your_email@gmail.com"
+const mailConfig = JSON.parse(fs.readFileSync("../mail.json", 'utf8'));
+
+const mygmail = mailConfig.username
 let transporter = nodemailer.createTransport({
     service: 'gmail', // or 'smtp.gmail.com'
     auth: {
         user: mygmail, // Your Gmail address
-        pass: 'your_app_password', // Your App Password or OAuth2 token
+        pass: mailConfig.password, // Your App Password or OAuth2 token
     },
 });
 
@@ -44,7 +46,7 @@ function sanitizeList(stringArray) {
 export async function connect() {
 	try {
 		return await mongoose.connect(
-			"mongodb://127.0.0.1:27017/your_database_name",
+			"mongodb://127.0.0.1:27017/stardb",
 			{
 				// Replace with your MongoDB connection string
 				useNewUrlParser: true,
@@ -120,9 +122,9 @@ export async function createSession(user) {
         return error
     }
 
-    // if(!sendEmail(mail, "Account Verification", mail_code.toString)){
-    //     return null
-    // }
+    if(!sendEmail(mail, "Account Verification", mail_code.toString)){
+        return null
+    }
 
     const newSession = new Session({
         usr_id: user.usr_id,
