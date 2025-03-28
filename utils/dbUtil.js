@@ -60,14 +60,15 @@ export async function connect() {
 
 async function sendEmail(recipient, subject, mail_code) {
     try { 
-      const data = fs.readFileSync("./public/mailCode.html", 'utf8');
+      let data = fs.readFileSync("./public/mailCode.html", 'utf8');
+      data = data.replace("mail_code", mail_code.toString());
       // send mail with defined transport object
       let info = await transporter.sendMail({
         from: mygmail, // sender address
         to: [recipient], // list of receivers
         subject: subject, // Subject line
         // text: text, // plain text body
-        html: data.replace("mail_code", mail_code.toString()),
+        html: data,
       });
   
       console.log('Message sent: %s', info.messageId);
