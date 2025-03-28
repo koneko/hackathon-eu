@@ -12,8 +12,12 @@ app.get("/", (req, res) => {
 	res.send("Hello, World");
 });
 
+app.get("/testing", (req, res) => {
+	let usr = dbUtil.createUser("Marko", "Markic", "marko@mail.com", "Student", ["c#", "C++"]);
+	dbUtil.createSession(usr);
+	res.send("Hello, World");
+});
+
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
 });
-
-dbUtil.createUser("Marko", "Markic", "marko@mail.com", "Student", ["c#", "C++"])
