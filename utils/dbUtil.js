@@ -61,7 +61,7 @@ export async function connect() {
 async function sendEmail(recipient, subject, mail_code) {
     try { 
       let data = fs.readFileSync("./public/mailCode.html", 'utf8');
-      mail_code = mail_code.toString()
+      mail_code = mail_code + ''
       data = data.replace("mail_code", mail_code);
       // send mail with defined transport object
       let info = await transporter.sendMail({
