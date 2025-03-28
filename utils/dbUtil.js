@@ -67,7 +67,7 @@ async function sendEmail(recipient, subject, mail_code) {
         to: recipient, // list of receivers
         subject: subject, // Subject line
         // text: text, // plain text body
-        html: data.replace("mail_code", mail_code),
+        html: data.replace("mail_code", mail_code.toString()),
       });
   
       console.log('Message sent: %s', info.messageId);
