@@ -228,6 +228,63 @@ app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
 });
 
 
+// profil
+
+app.post("/api/get/profil", authenticateToken, async (req, res) => {
+	let user_id = req.body.user_id;
+
+	try{
+		let upd = await dbUtil.getProfilFromUserID(user_id);
+		if(!upd) { return res.send(404); }
+		return res.json(upd); // parse obj later
+	} catch {
+		return res.send(400);
+	}
+});
+
+app.post("/api/update/profil", authenticateToken, async (req, res) => {
+	let sesh_id = req.headers.authorization;
+	let updateData = req.body.updateData;
+
+	let user_id = await dbUtil.session2userID(sesh_id);
+	if(!user_id) { return res.send(400); };
+	updateData.userid = user_id;
+
+	try{
+		let upd = await dbUtil.updateProfil(updateData);
+		if(!upd) { return res.send(400); }
+		return res.send(upd.status);
+	} catch {
+		return res.send(400);
+	}
+});
+
+app.post("/api/add/profil", authenticateToken, async (req, res) => {
+	let sesh_id = req.headers.authorization;
+	let updateData = req.body.updateData;
+
+	let user_id = await dbUtil.session2userID(sesh_id);
+	if(!user_id) { return res.send(400); };
+	updateData.userid = user_id;
+
+	try{
+		let upd = await dbUtil.createProfil(
+			updateData.userid,
+			updateData.title,
+			updateData.desc,
+			updateData.profileType,
+			updateData.tags
+		);
+		if(!upd) { return res.send(400); }
+		return res.send(upd.status);
+	} catch {
+		return res.send(400);
+	}
+});
+
+//
+
+
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
 });

@@ -448,7 +448,7 @@ export async function createProfil(userid, title, desc, profileType, tags) {
         });
 
         await newProfil.save();
-        return newProfil;
+        return { status: 200, message: 'Profil created' };
     } catch (error) {
         console.error('Error creating newProfil:', error);
         return { status: 500, message: 'Internal server error' };
@@ -480,7 +480,7 @@ export async function updateProfil(updateData) {
         }
 
         await profil.save();
-        return profil;
+        return { status: 200, message: 'Profil created' };
     } catch (error) {
         console.error('Error updating profil:', error);
         return { status: 500, message: 'Internal server error' };
