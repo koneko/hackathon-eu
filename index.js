@@ -139,7 +139,8 @@ app.post("/api/verify/mailcode", async (req, res) => {
 });
 
 app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
-
+	let user_id = await dbUtil.session2userID(req.headers.authorization);
+	if(!user_id) { return res.send(400); }
 
 	// const form = document.getElementById('uploadForm');
     // const messageDiv = document.getElementById('message');
@@ -204,12 +205,11 @@ app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
 				return res.status(400).send('Invalid file data.');
 			}
 
-			const filename = filenameMatch[1];
 			const fileDataStart = filePart.indexOf('\r\n\r\n') + 4;
 			const fileDataEnd = filePart.lastIndexOf('\r\n');
 			const fileData = filePart.slice(fileDataStart, fileDataEnd);
 
-			const filePath = path.join(__dirname, 'pictures', filename);
+			const filePath = path.join(__dirname, 'pictures', user_id+".png");
 
 			fs.mkdirSync(path.join(__dirname, 'pictures'), { recursive: true }); // Ensure directory exists
 
