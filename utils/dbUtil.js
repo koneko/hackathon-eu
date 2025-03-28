@@ -522,3 +522,18 @@ export async function updateProfil(updateData) {
 		return { status: 500, message: "Internal server error" };
 	}
 }
+
+export async function getProfils(n) {
+	try {
+		const profils = await Profil.find().limit(n).exec();
+
+		if (!profils) {
+			return { status: 404, message: "profil not found" };
+		}
+
+		return profils;
+	} catch (error) {
+		console.error("Error getting profils:", error);
+		return { status: 500, message: "Internal server error" };
+	}
+}

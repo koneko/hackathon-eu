@@ -311,6 +311,35 @@ app.post("/api/add/profil", authenticateToken, async (req, res) => {
 	}
 });
 
+
+app.post("/api/get/profils", authenticateToken, async (req, res) => {
+	let sesh_id = req.headers.authorization;
+	let limit = req.body.limit;
+
+	if(limit > 100) {
+		return res.send(400);
+	}
+
+	res.json(await dbUtil.getProfils(limit));
+
+	// try {
+	// 	let upd = await dbUtil.createProfil(
+	// 		updateData.userid,
+	// 		updateData.title,
+	// 		updateData.desc,
+	// 		updateData.profileType,
+	// 		updateData.tags
+	// 	);
+	// 	if (!upd) {
+	// 		return res.send(400);
+	// 	}
+	// 	return res.send(upd);
+	// } catch {
+	// 	return res.send(400);
+	// }
+});
+
+
 //
 
 app.listen(port, () => {
