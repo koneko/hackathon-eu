@@ -124,7 +124,7 @@
 					}
 				}
 			}
-			function login(sendToProfileSettings) {
+			function login(user_id) {
 				const code = document.getElementById("code").value;
 				console.log(code);
 				fetch("/api/verify/mailcode", {
@@ -145,11 +145,6 @@
 							"STAR_session_id",
 							res.authorization
 						);
-						if (sendToProfileSettings) {
-							window.location.href = "/account/profile";
-						} else {
-							window.location.href = "/discover";
-						}
 					});
 			}
 			function tag(tag) {
@@ -168,50 +163,33 @@
 			}
 			function createAccount() {
 				let name = document.getElementById("name").value;
-				let lastName = document.getElementById("lastname").value;
+				let lastname = document.getElementById("surname").value;
 				let accType = document.getElementById("acctype").value;
-
-				console.log("Name:", name);
-				console.log("Last Name:", lastName);
-				console.log("Email:", email);
-				console.log("Account Type:", accType);
-				console.log("Tags:", tags);
 				if (accType == 0) {
 					accType = "Student";
 				} else {
 					accType = "Teacher";
 				}
-				if (!name) {
-					alert("Name is required.");
-					return;
-				}
-				if (!lastName) {
-					alert("Last name is required.");
-					return;
-				}
-				if (!email) {
-					alert("Email is required.");
-					return;
-				}
-				if (email.includes("+")) {
-					alert("Email addresses with '+' are not allowed.");
-					return;
-				}
-				if (tags.length === 0) {
-					alert("At least one tag must be selected.");
-					return;
-				}
+				apiCreateAccount(name, lastname, email, accType, tags);
+			}
+			function apiCreateAccount(
+				name2,
+				lastName2,
+				mail2,
+				accType2,
+				tags2
+			) {
 				fetch("/api/makeAccount", {
 					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
-						name: name,
-						lastName: lastName,
-						mail: email,
-						accType: accType,
-						tags: tags,
+						name: name2,
+						lastName: lastName2,
+						mail: mail2,
+						accType: accType2,
+						tags: tags2,
 					}),
 				})
 					.then((req) => req.json())
@@ -222,7 +200,7 @@
 						document.getElementById("main").innerHTML = `
 								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved into the boxes below.</p>
 								<input id="code"/><br>
-								<button class="btn" onclick="login(true)">Send</button>
+								<button class="btn" onclick="login('${user_id}')">Send</button>
 								`;
 					});
 			}
@@ -231,7 +209,7 @@
 				const emailRegex =
 					/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 				if (emailRegex.test(email)) {
-					let req = await fetch("/api/getAccount", {
+					let req = await fetch("/api/getAcc", {
 						method: "POST",
 						headers: {
 							"Content-Type": "application/json",
@@ -243,9 +221,9 @@
 						let x = await f.json();
 						// account doesnt exist
 						document.getElementById("main").innerHTML = `
-							<p>Tell us some more information about you. No middle names.</p>
+							<p>Tell us some more information about you.</p>
 							<input id="name" placeholder="Name" />
-							<input id="lastname" placeholder="Lastname" />
+							<input id="surname" placeholder="Surname" />
 							<p>Are you a student or a teacher?</p>
 							<select id="acctype"><option value="0">Student</option> <option value="1">Teacher</option> </select>
 							<p>Choose atleast one and up to 10 tags to learn/teach.</p>
@@ -261,7 +239,7 @@
 								"myUL"
 							).innerHTML += `<li onclick='tag("${tag}")' id='${tag}'><a>${tag}</a></li>`;
 						});
-					} else if (req.status == 200) {
+					} else {
 						let json = await req.json();
 						let user_id = json.user_id;
 						localStorage.setItem("STAR_user_id", user_id);
@@ -273,9 +251,9 @@
 							body: `{"user_id":"${user_id}"}`,
 						});
 						document.getElementById("main").innerHTML = `
-								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved below.</p>
+								<p>A verification code has been sent to your mail, please input the 6 digits you have recieved into the boxes below.</p>
 								<input id="code"/><br>
-								<button class="btn" onclick="login(false)">Send</button>
+								<button class="btn" onclick="login('${user_id}')">Send</button>
 								`;
 					}
 				} else {

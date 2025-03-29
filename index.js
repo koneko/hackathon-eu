@@ -39,13 +39,23 @@ app.post("/api/verify/session", async (req, res) => {
 	return res.send(200);
 });
 
-// {
-// 	"name": "Ime",
-// 	"lastName": "Prezime",
-// 	"mail": "mail",
-// 	"accType": "account type/ np student",
-// 	"tags": []
-// }
+app.post("/api/verify/mailcode", async (req, res) => {
+	let mail_code = req.body.mail?.mail_code;
+	let user_id = req.body.mail?.user_id;
+
+	if (!mail_code || !user_id) {
+		return res.send(400);
+	}
+
+	try {
+		if (await dbUtil.validateEmailCode(user_id, mail_code)) {
+			let sesh = await dbUtil.getUserSession(user_id);
+			return res.json({ authorization: sesh.session_id });
+		}
+	} catch {
+		return res.send(400);
+	}
+});
 
 app.post("/api/makeSession", async (req, res) => {
 	let user_id = req.body.user_id;
@@ -55,7 +65,38 @@ app.post("/api/makeSession", async (req, res) => {
 	return res.send(400);
 });
 
-app.post("/api/getAcc", async (req, res) => {
+app.post("/api/makeAccount", async (req, res) => {
+	let name = req.body.name;
+	let lastName = req.body.lastName;
+	let mail = req.body.mail;
+	let accType = req.body.accType;
+	let tags = req.body.tags;
+	console.log("Creating account with the following details:");
+	console.log("Name:", name);
+	console.log("Last Name:", lastName);
+	console.log("Email:", mail);
+	console.log("Account Type:", accType);
+	console.log("Tags:", tags);
+
+	if (mail.includes("+")) {
+		return res.send(400);
+	}
+	try {
+		let usr = await dbUtil.createUser(name, lastName, mail, accType, tags);
+		if (!usr) {
+			return res.send(400);
+		}
+		let sesh = await dbUtil.createSession(usr);
+		if (!sesh) {
+			return res.send(400);
+		}
+		return res.json({ user_id: usr.usr_id });
+	} catch {
+		return res.send(400);
+	}
+});
+
+app.post("/api/getAccount", async (req, res) => {
 	let mail = req.body.mail; // {"mail": "mail@gmail.com"}
 	let usr = await dbUtil.findUserByMail(mail);
 	if (!!usr) {
@@ -64,7 +105,7 @@ app.post("/api/getAcc", async (req, res) => {
 	return res.send(400);
 });
 
-app.post("/api/update/user", authenticateToken, async (req, res) => {
+app.post("/api/updateAccount", authenticateToken, async (req, res) => {
 	let user_id = req.body.user_id;
 	let updateData = req.body.updateData;
 
@@ -100,7 +141,7 @@ app.post("/api/update/connections", authenticateToken, async (req, res) => {
 	}
 });
 
-app.post("/api/add/connections", authenticateToken, async (req, res) => {
+app.post("/api/make/connections", authenticateToken, async (req, res) => {
 	let sesh_id = req.headers.authorization;
 	let updateData = req.body.updateData;
 
@@ -116,46 +157,6 @@ app.post("/api/add/connections", authenticateToken, async (req, res) => {
 			return res.send(400);
 		}
 		return res.send(upd.status);
-	} catch {
-		return res.send(400);
-	}
-});
-
-app.post("/api/makeAccount", async (req, res) => {
-	let name = req.body.name;
-	let lastName = req.body.lastName;
-	let mail = req.body.mail;
-	let accType = req.body.accType;
-	let tags = req.body.tags;
-
-	try {
-		let usr = await dbUtil.createUser(name, lastName, mail, accType, tags);
-		if (!usr) {
-			return res.send(400);
-		}
-		let sesh = await dbUtil.createSession(usr);
-		if (!sesh) {
-			return res.send(400);
-		}
-		return res.json({ user_id: usr.usr_id });
-	} catch {
-		return res.send(400);
-	}
-});
-
-app.post("/api/verify/mailcode", async (req, res) => {
-	let mail_code = req.body.mail?.mail_code;
-	let user_id = req.body.mail?.user_id;
-
-	if (!mail_code || !user_id) {
-		return res.send(400);
-	}
-
-	try {
-		if (await dbUtil.validateEmailCode(user_id, mail_code)) {
-			let sesh = await dbUtil.getUserSession(user_id);
-			return res.json({ authorization: sesh.session_id });
-		}
 	} catch {
 		return res.send(400);
 	}
@@ -288,7 +289,7 @@ app.post("/api/update/profil", authenticateToken, async (req, res) => {
 	}
 });
 
-app.post("/api/add/profil", authenticateToken, async (req, res) => {
+app.post("/api/make/profil", authenticateToken, async (req, res) => {
 	let sesh_id = req.headers.authorization;
 	let updateData = req.body.updateData;
 
