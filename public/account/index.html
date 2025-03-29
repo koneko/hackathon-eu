@@ -45,6 +45,44 @@
 			button:hover {
 				background-color: rgb(45, 140, 185);
 			}
+			/* The Modal (background) */
+			.modal {
+				display: none; /* Hidden by default */
+				position: fixed; /* Stay in place */
+				z-index: 1; /* Sit on top */
+				padding-top: 100px; /* Location of the box */
+				left: 0;
+				top: 0;
+				width: 100%; /* Full width */
+				height: 100%; /* Full height */
+				overflow: auto; /* Enable scroll if needed */
+				background-color: rgb(0, 0, 0); /* Fallback color */
+				background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+			}
+
+			/* Modal Content */
+			.modal-content {
+				background-color: #fefefe;
+				margin: auto;
+				padding: 20px;
+				border: 1px solid #888;
+				width: 80%;
+			}
+
+			/* The Close Button */
+			.close {
+				color: #aaaaaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+			}
+
+			.close:hover,
+			.close:focus {
+				color: #000;
+				text-decoration: none;
+				cursor: pointer;
+			}
 		</style>
 	</head>
 	<body>
@@ -60,10 +98,124 @@
 			</li>
 		</ul>
 		<main id="main">Please login.</main>
+
+		<!-- The Modal -->
+		<div id="myModal" class="modal">
+			<!-- Modal content -->
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<!-- mail: { type: String },
+				discord: { type: String },
+				phone: { type: String },
+				telegram: { type: String },
+				linkedin: { type: String },
+				wa_bis: { type: String },
+				viber: { type: String },
+				instagram: { type: String },
+				github: { type: String },
+				teams: { type: String }, -->
+				<div>
+					<p>
+						Please put your handle on the platforms you can be
+						reached. STAR does not provide chat services and
+						requires students and mentors to talk/connect via other
+						services. You may leave some/all blank if you wish not
+						to link it.
+					</p>
+					<label for="mail"
+						>Mail (does not need to be the same as the one you
+						signed in with):</label
+					>
+					<input type="text" id="mail" name="mail" /><br /><br />
+
+					<label for="discord">Discord:</label>
+					<input
+						type="text"
+						id="discord"
+						name="discord"
+					/><br /><br />
+
+					<label for="phone">Phone:</label>
+					<input type="text" id="phone" name="phone" /><br /><br />
+
+					<label for="telegram">Telegram:</label>
+					<input
+						type="text"
+						id="telegram"
+						name="telegram"
+					/><br /><br />
+
+					<label for="linkedin">LinkedIn:</label>
+					<input
+						type="text"
+						id="linkedin"
+						name="linkedin"
+					/><br /><br />
+
+					<label for="wa_bis">WhatsApp Business:</label>
+					<input type="text" id="wa_bis" name="wa_bis" /><br /><br />
+
+					<label for="viber">Viber:</label>
+					<input type="text" id="viber" name="viber" /><br /><br />
+
+					<label for="instagram">Instagram:</label>
+					<input
+						type="text"
+						id="instagram"
+						name="instagram"
+					/><br /><br />
+
+					<label for="github">GitHub:</label>
+					<input type="text" id="github" name="github" /><br /><br />
+
+					<label for="teams">Teams:</label>
+					<input type="text" id="teams" name="teams" /><br /><br />
+
+					<button type="button" onclick="saveExternalAccounts()">
+						Save
+					</button>
+				</div>
+			</div>
+		</div>
 	</body>
 	<script src="/js/sessionCheck.js"></script>
 	<script src="/js/getProfilePhoto.js"></script>
 	<script>
+		// Get the modal
+		var modal = document.getElementById("myModal");
+
+		// Get the <span> element that closes the modal
+		var span = document.getElementsByClassName("close")[0];
+
+		// When the user clicks on <span> (x), close the modal
+		span.onclick = function () {
+			modal.style.display = "none";
+		};
+
+		// When the user clicks anywhere outside of the modal, close it
+		window.onclick = function (event) {
+			if (event.target == modal) {
+				modal.style.display = "none";
+			}
+		};
+		async function asbsd() {
+			document.getElementById("myModal").style.display = "block";
+		}
+		async function saveExternalAccounts() {
+			let connections = {
+				mail: document.getElementById("mail").value,
+				discord: document.getElementById("discord").value,
+				phone: document.getElementById("phone").value,
+				telegram: document.getElementById("telegram").value,
+				linkedin: document.getElementById("linkedin").value,
+				wa_bis: document.getElementById("wa_bis").value,
+				viber: document.getElementById("viber").value,
+				instagram: document.getElementById("instagram").value,
+				github: document.getElementById("github").value,
+				teams: document.getElementById("teams").value,
+			};
+			console.log(connections);
+		}
 		async function getAccount() {
 			let x = await fetch("/api/getAccountByID", {
 				method: "POST",
@@ -89,7 +241,7 @@
 				<p>Account type: ${f.accountType}</p>
 				<p>Selected tags: ${JSON.parse(f.tags).join(", ")}</p>
 				<button>Edit account details</button>
-				<button>Link external accounts</button>
+				<button id="myBtn" onclick="asbsd()">Link external accounts</button>
 				<button>Upload profile photo</button>
 			</div>
 				`;
