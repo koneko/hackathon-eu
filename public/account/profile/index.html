@@ -107,6 +107,11 @@
 						},
 					}),
 				});
+				if (x.status == 200) {
+					window.location.reload();
+				} else {
+					alert("An error occurred. Please try logging in.");
+				}
 			}
 			async function getUserProfile() {
 				let x = await fetch("/api/get/profil", {

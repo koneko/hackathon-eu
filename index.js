@@ -297,13 +297,12 @@ app.post("/api/make/profil", authenticateToken, async (req, res) => {
 	if (!user_id) {
 		return res.send(400);
 	}
-	updateData.userid = user_id;
 
 	try {
 		let upd = await dbUtil.createProfil(
-			updateData.userid,
+			user_id,
 			updateData.title,
-			updateData.desc,
+			updateData.desc
 		);
 		if (!upd) {
 			return res.send(400);
