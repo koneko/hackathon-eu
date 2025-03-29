@@ -527,7 +527,7 @@ export async function updateProfil(updateData) {
 
 export async function getProfils(profileType, n) {
 	try {
-		const profils = await await CollectionX.aggregate([
+		const profils = await Profil.aggregate([
 			{
 			  $lookup: {
 				from: "users", // MongoDB automatically converts model names to lowercase + plural
