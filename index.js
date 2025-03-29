@@ -301,7 +301,9 @@ app.post("/api/update/profil", authenticateToken, async (req, res) => {
 app.post("/api/make/profil", authenticateToken, async (req, res) => {
 	let sesh_id = req.headers.authorization;
 	let updateData = req.body.updateData;
-
+	console.log("Creating profile with the following details:");
+	console.log("Session ID:", sesh_id);
+	console.log("Update Data:", updateData);
 	let user_id = await dbUtil.session2userID(sesh_id);
 	if (!user_id) {
 		return res.send(400);

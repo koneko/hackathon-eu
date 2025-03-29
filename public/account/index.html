@@ -39,5 +39,9 @@
 		<main></main>
 	</body>
 	<script src="/js/sessionCheck.js"></script>
-	<script></script>
+	<script>
+		async function getAccount() {
+			let x = await fetch("/api/getAccountByid");
+		}
+	</script>
 </html>

@@ -88,7 +88,12 @@
 				<a href="/account" id="account-label">Account</a>
 			</li>
 		</ul>
-		<main id="main"></main>
+		<main id="main">
+			<div id="content"></div>
+			<button onclick="window.location.href = '/account'">
+				To Account Settings
+			</button>
+		</main>
 		<script src="/js/sessionCheck.js"></script>
 		<script>
 			async function createUserProfile() {
@@ -98,6 +103,7 @@
 					method: "POST",
 					headers: {
 						authorization: localStorage.getItem("STAR_session_id"),
+						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
 						updateData: {
@@ -107,6 +113,7 @@
 						},
 					}),
 				});
+				console.log(x.status);
 				if (x.status == 200) {
 					window.location.reload();
 				} else {
@@ -118,7 +125,11 @@
 					method: "POST",
 					headers: {
 						authorization: localStorage.getItem("STAR_session_id"),
+						"Content-Type": "application/json",
 					},
+					body: JSON.stringify({
+						user_id: localStorage.getItem("STAR_user_id"),
+					}),
 				});
 				if (x.status == 404) {
 					document.getElementById("main").innerHTML = `
@@ -131,6 +142,11 @@
 					`;
 				} else if (x.status == 200) {
 					let xx = await x.json();
+					console.log(xx);
+					document.getElementById("content").innerHTML = `
+					<h1>${xx.title}</h1>
+					<p>${xx.desc}</p>
+					`;
 				}
 			}
 			getUserProfile();
