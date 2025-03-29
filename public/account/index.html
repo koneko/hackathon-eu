@@ -181,6 +181,7 @@
 	<script src="/js/sessionCheck.js"></script>
 	<script src="/js/getProfilePhoto.js"></script>
 	<script>
+		let hasConnection = null;
 		// Get the modal
 		var modal = document.getElementById("myModal");
 
@@ -214,18 +215,57 @@
 				github: document.getElementById("github").value,
 				teams: document.getElementById("teams").value,
 			};
+			Object.keys(connections).forEach((key) => {
+				if (connections[key] === "") {
+					connections[key] = null;
+				}
+			});
 			console.log(connections);
-		}
-		async function getConnections() {
-			let x = await fetch("/api/get/connections", {
+			let url = "/api/make/connections";
+			if (hasConnection) {
+				url = "/api/update/connections";
+			}
+			let response = await fetch(url, {
 				method: "POST",
 				headers: {
+					authorization: localStorage.getItem("STAR_session_id"),
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					usr_id: localStorage.getItem("STAR_user_id"),
+					updateData: connections,
+				}),
+			});
+			if (response.status === 200) {
+				alert("Connections saved successfully!");
+				modal.style.display = "none";
+			} else {
+				alert("Failed to save connections.");
+			}
+		}
+		async function getConnections() {
+			let x = await fetch("/api/get/connection", {
+				method: "POST",
+				headers: {
+					authorization: localStorage.getItem("STAR_session_id"),
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
 					user_id: localStorage.getItem("STAR_user_id"),
 				}),
 			});
+			if (x.status == 200) {
+				let f = await x.json();
+				console.log(f);
+				Object.keys(f).forEach((key) => {
+					if (document.getElementById(key)) {
+						document.getElementById(key).value = f[key];
+					}
+				});
+				hasConnection = true;
+			} else {
+				hasConnection = false;
+			}
 		}
 		async function getAccount() {
 			let x = await fetch("/api/getAccountByID", {
@@ -258,5 +298,6 @@
 				`;
 		}
 		getAccount();
+		getConnections();
 	</script>
 </html>

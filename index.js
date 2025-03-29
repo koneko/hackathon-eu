@@ -153,6 +153,7 @@ app.post("/api/update/connections", authenticateToken, async (req, res) => {
 app.post("/api/make/connections", authenticateToken, async (req, res) => {
 	let sesh_id = req.headers.authorization;
 	let updateData = req.body.updateData;
+	console.log(updateData);
 
 	let user_id = await dbUtil.session2userID(sesh_id);
 	if (!user_id) {
@@ -172,14 +173,12 @@ app.post("/api/make/connections", authenticateToken, async (req, res) => {
 });
 
 app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
-
-
 	// async function uploadProfilePicture(file) {
 	// 	const reader = new FileReader();
 	// 	reader.readAsDataURL(file);
 	// 	reader.onload = async () => {
 	// 		const base64Image = reader.result;
-	
+
 	// 		try {
 	// 			const response = await fetch("/api/upload/pfp", {
 	// 				method: "POST",
@@ -189,7 +188,7 @@ app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
 	// 				},
 	// 				body: JSON.stringify({ image: base64Image })
 	// 			});
-	
+
 	// 			const result = await response.text();
 	// 			if (response.ok) {
 	// 				alert("Upload successful!");
@@ -202,7 +201,7 @@ app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
 	// 		}
 	// 	};
 	// }
-	
+
 	// document.getElementById("fileInput").addEventListener("change", function(event) {
 	// 	const file = event.target.files[0];
 	// 	if (file) {
@@ -210,39 +209,38 @@ app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
 	// 	}
 	// });
 
-
 	try {
-        let user_id = await dbUtil.session2userID(req.headers.authorization);
-        if (!user_id) {
-            return res.status(400).send("Invalid session.");
-        }
+		let user_id = await dbUtil.session2userID(req.headers.authorization);
+		if (!user_id) {
+			return res.status(400).send("Invalid session.");
+		}
 
-        const { image } = req.body;
-        if (!image) {
-            return res.status(400).send("No image data provided.");
-        }
+		const { image } = req.body;
+		if (!image) {
+			return res.status(400).send("No image data provided.");
+		}
 
-        const matches = image.match(/^data:image\/(png|jpeg|jpg);base64,(.+)$/);
-        if (!matches) {
-            return res.status(400).send("Invalid image format.");
-        }
+		const matches = image.match(/^data:image\/(png|jpeg|jpg);base64,(.+)$/);
+		if (!matches) {
+			return res.status(400).send("Invalid image format.");
+		}
 
-        const base64Data = matches[2];
-        const filePath = path.join(__dirname, "pictures", `${user_id}.png`);
+		const base64Data = matches[2];
+		const filePath = path.join(__dirname, "pictures", `${user_id}.png`);
 
-        fs.mkdirSync(path.dirname(filePath), { recursive: true }); // Ensure directory exists
+		fs.mkdirSync(path.dirname(filePath), { recursive: true }); // Ensure directory exists
 
-        fs.writeFile(filePath, Buffer.from(base64Data, "base64"), (err) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).send("Error saving file.");
-            }
-            res.send("File uploaded successfully!");
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send("Server error.");
-    }
+		fs.writeFile(filePath, Buffer.from(base64Data, "base64"), (err) => {
+			if (err) {
+				console.error(err);
+				return res.status(500).send("Error saving file.");
+			}
+			res.send("File uploaded successfully!");
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).send("Server error.");
+	}
 });
 
 // profil
@@ -337,7 +335,7 @@ app.post("/api/logout", authenticateToken, async (req, res) => {
 	let token = req.headers?.authorization;
 
 	try {
-		let upd = await dbUtil.removeSession({"session_id": token});
+		let upd = await dbUtil.removeSession({ session_id: token });
 		if (!upd) {
 			return res.send(400);
 		}
@@ -346,7 +344,6 @@ app.post("/api/logout", authenticateToken, async (req, res) => {
 		return res.send(400);
 	}
 });
-
 
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);

@@ -253,7 +253,10 @@ export async function updateUser(userId, updateData) {
 		}
 
 		if (updateData.pfp !== undefined) {
-			if(new TextEncoder().encode(updateData.pfp).length > 15 * 1024 * 1024) {
+			if (
+				new TextEncoder().encode(updateData.pfp).length >
+				15 * 1024 * 1024
+			) {
 				return { status: 400, message: "Invalid pfp size" };
 			}
 			user.pfp = updateData.pfp;
@@ -342,7 +345,7 @@ export async function getConnectionFromUserID(userID) {
 export async function createConnection(connectionData) {
 	try {
 		const connection = await Connection.findOne({
-			usr_id: updateData.usr_id,
+			usr_id: connectionData.usr_id,
 		});
 
 		if (connection) {
@@ -500,17 +503,17 @@ export async function getProfils(profileType, n) {
 	try {
 		const profils = await Profil.aggregate([
 			{
-			  $lookup: {
-				from: "users", // MongoDB automatically converts model names to lowercase + plural
-				localField: "usr_id",
-				foreignField: "usr_id",
-				as: "user_data",
-			  },
+				$lookup: {
+					from: "users", // MongoDB automatically converts model names to lowercase + plural
+					localField: "usr_id",
+					foreignField: "usr_id",
+					as: "user_data",
+				},
 			},
 			{
-			  $match: {
-				"user_data.accountType": profileType, // Ensure only documents with the specific flag are retrieved
-			  },
+				$match: {
+					"user_data.accountType": profileType, // Ensure only documents with the specific flag are retrieved
+				},
 			},
 			{ $limit: n }, // Limit the results to 50
 		]);
