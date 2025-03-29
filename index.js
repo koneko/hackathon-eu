@@ -323,6 +323,16 @@ app.post("/api/get/profils", authenticateToken, async (req, res) => {
 	res.json(await dbUtil.getProfils(profileType, limit));
 });
 
+app.post("/api/get/connection", authenticateToken, async (req, res) => {
+	let usrid = req.body?.user_id;
+
+	if (!usrid) {
+		return res.send(400);
+	}
+
+	res.json(await dbUtil.getConnectionFromUserID(usrid));
+});
+
 app.post("/api/logout", authenticateToken, async (req, res) => {
 	let token = req.headers?.authorization;
 
