@@ -100,7 +100,7 @@
 				}
 			}
 			function login(user_id) {
-				const code = document.getElementById("code");
+				const code = document.getElementById("code").value;
 				console.log(code);
 				fetch("/api/verify/mailcode", {
 					method: "POST",
@@ -108,8 +108,10 @@
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
-						user_id: localStorage.getItem("STAR_user_id"),
-						mail_code: code,
+						mail: {
+							user_id: localStorage.getItem("STAR_user_id"),
+							mail_code: code,
+						},
 					}),
 				})
 					.then((res) => res.json())
@@ -161,9 +163,7 @@
 						tags: tags2,
 					}),
 				})
-					.then((req) => {
-						req.json();
-					})
+					.then((req) => req.json())
 					.then((user) => {
 						console.log(user);
 						let user_id = user.user_id;

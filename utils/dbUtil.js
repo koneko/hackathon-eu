@@ -87,6 +87,18 @@ function isDateMoreThan5MinutesOld(date) {
 	return diffInMilliseconds > fiveMinutesInMilliseconds;
 }
 
+function isDateMoreThan5MinutesOldFrthisTime(date) {
+	if (!(date instanceof Date)) {
+		throw new Error("Input must be a Date object.");
+	}
+
+	const now = new Date();
+	const diffInMilliseconds = now - date;
+	const fiveMinutesInMilliseconds = 5 * 60 * 1000; // 5 minutes * 60 seconds * 1000 milliseconds
+
+	return diffInMilliseconds > fiveMinutesInMilliseconds;
+}
+
 export async function getUserSession(userID) {
 	try {
 		const foundSession = await Session.findOne({
@@ -109,9 +121,9 @@ export async function createSession(user) {
 	const mail = user.mail;
 
 	try {
-		let sesh = getUserSession(user.usr_id);
+		let sesh = await getUserSession(user.usr_id);
 		if (sesh) {
-			removeSession(sesh);
+			await removeSession(sesh);
 		}
 	} catch (error) {
 		console.error("Error validating session code:", error);
@@ -143,7 +155,7 @@ export async function validateEmailCode(userID, code) {
 			return false;
 		}
 
-		if (isDateMoreThan5MinutesOld(foundSession.created_at)) {
+		if (isDateMoreThan5MinutesOldFrthisTime(foundSession.created_at)) {
 			removeSession(foundSession);
 			return false;
 		}
@@ -525,7 +537,9 @@ export async function updateProfil(updateData) {
 
 export async function getProfils(profileType, n) {
 	try {
-		const profils = await Profil.find({ profileType: profileType }).limit(n).exec();
+		const profils = await Profil.find({ profileType: profileType })
+			.limit(n)
+			.exec();
 
 		if (!profils) {
 			return { status: 404, message: "profil not found" };
