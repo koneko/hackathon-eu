@@ -339,6 +339,21 @@ app.post("/api/get/profils", authenticateToken, async (req, res) => {
 	res.json(await dbUtil.getProfils(profileType, limit));
 });
 
+app.post("/api/logout", authenticateToken, async (req, res) => {
+	let token = req.headers?.authorization;
+
+	try {
+		let upd = await dbUtil.removeSession({"session_id": token});
+		if (!upd) {
+			return res.send(400);
+		}
+		return res.send(upd.status);
+	} catch {
+		return res.send(400);
+	}
+});
+
+
 app.listen(port, () => {
 	console.log(`Server is running on http://localhost:${port}`);
 });
