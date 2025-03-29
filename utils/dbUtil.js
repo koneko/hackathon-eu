@@ -479,7 +479,7 @@ export async function getProfilFromUserID(userID) {
 	}
 }
 
-export async function createProfil(userid, title, desc, profileType) {
+export async function createProfil(userid, title, desc) {
 	try {
 		const profil = await Profil.findOne({ usr_id: userid });
 
@@ -490,7 +490,6 @@ export async function createProfil(userid, title, desc, profileType) {
 		const newProfil = new Profil({
 			title: sanitizeHTML(title),
 			desc: sanitizeHTML(desc),
-			profileType: sanitizeHTML(profileType),
 			usr_id: userid,
 		});
 
@@ -518,10 +517,6 @@ export async function updateProfil(updateData) {
 			profil.desc = sanitizeHTML(updateData.desc);
 		}
 
-		if (updateData.profileType !== undefined) {
-			profil.profileType = sanitizeHTML(updateData.profileType);
-		}
-
 		await profil.save();
 		return { status: 200, message: "Profil created" };
 	} catch (error) {
@@ -532,9 +527,22 @@ export async function updateProfil(updateData) {
 
 export async function getProfils(profileType, n) {
 	try {
-		const profils = await Profil.find({ profileType: profileType })
-			.limit(n)
-			.exec();
+		const profils = await await CollectionX.aggregate([
+			{
+			  $lookup: {
+				from: "users", // MongoDB automatically converts model names to lowercase + plural
+				localField: "usr_id",
+				foreignField: "usr_id",
+				as: "user_data",
+			  },
+			},
+			{
+			  $match: {
+				"user_data.accountType": profileType, // Ensure only documents with the specific flag are retrieved
+			  },
+			},
+			{ $limit: n }, // Limit the results to 50
+		]);
 
 		if (!profils) {
 			return { status: 404, message: "profil not found" };
