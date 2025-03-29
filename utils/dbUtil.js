@@ -354,28 +354,16 @@ export async function createConnection(connectionData) {
 		}
 
 		const newConnection = new Connection({
-			mail: connectionData.mail ? sanitize(connectionData.mail) : null,
-			discord: connectionData.discord
-				? sanitize(connectionData.discord)
-				: null,
-			phone: connectionData.phone ? sanitize(connectionData.phone) : null,
-			telegram: connectionData.telegram
-				? sanitize(connectionData.telegram)
-				: null,
-			linkedin: connectionData.linkedin
-				? sanitize(connectionData.linkedin)
-				: null,
-			wa_bis: connectionData.wa_bis
-				? sanitize(connectionData.wa_bis)
-				: null,
-			viber: connectionData.viber ? sanitize(connectionData.viber) : null,
-			instagram: connectionData.instagram
-				? sanitize(connectionData.instagram)
-				: null,
-			github: connectionData.github
-				? sanitize(connectionData.github)
-				: null,
-			teams: connectionData.teams ? sanitize(connectionData.teams) : null,
+			mail: connectionData.mail,
+			discord: connectionData.discord,
+			phone: connectionData.phone,
+			telegram: connectionData.telegram,
+			linkedin: connectionData.linkedin,
+			wa_bis: connectionData.wa_bis,
+			viber: connectionData.viber,
+			instagram: connectionData.instagram,
+			github: connectionData.github,
+			teams: connectionData.teams,
 			usr_id: connectionData.usr_id,
 		});
 
@@ -402,62 +390,42 @@ export async function updateConnection(updateData) {
 				return { status: 400, message: "Invalid mail" };
 			}
 			connection.mail = updateData.mail
-				? sanitize(updateData.mail)
-				: null;
 		}
 
 		if (updateData.discord !== undefined) {
 			connection.discord = updateData.discord
-				? sanitize(updateData.discord)
-				: null;
 		}
 
 		if (updateData.phone !== undefined) {
 			connection.phone = updateData.phone
-				? sanitize(updateData.phone)
-				: null;
 		}
 
 		if (updateData.telegram !== undefined) {
 			connection.telegram = updateData.telegram
-				? sanitize(updateData.telegram)
-				: null;
 		}
 
 		if (updateData.linkedin !== undefined) {
 			connection.linkedin = updateData.linkedin
-				? sanitize(updateData.linkedin)
-				: null;
 		}
 
 		if (updateData.wa_bis !== undefined) {
 			connection.wa_bis = updateData.wa_bis
-				? sanitize(updateData.wa_bis)
-				: null;
 		}
 
 		if (updateData.viber !== undefined) {
 			connection.viber = updateData.viber
-				? sanitize(updateData.viber)
-				: null;
 		}
 
 		if (updateData.instagram !== undefined) {
 			connection.instagram = updateData.instagram
-				? sanitize(updateData.instagram)
-				: null;
 		}
 
 		if (updateData.github !== undefined) {
 			connection.github = updateData.github
-				? sanitize(updateData.github)
-				: null;
 		}
 
 		if (updateData.teams !== undefined) {
 			connection.teams = updateData.teams
-				? sanitize(updateData.teams)
-				: null;
 		}
 
 		if (updateData.usr_id !== undefined) {
