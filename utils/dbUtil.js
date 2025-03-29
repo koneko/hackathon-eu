@@ -334,6 +334,10 @@ export async function findUserByMail(mail) {
 export async function getConnectionFromUserID(userID) {
 	try {
 		const connection = await Connection.findOne({ usr_id: userID });
+		console.log(connection);
+		if (!connection) {
+			return { status: 404 };
+		}
 		return connection;
 	} catch (error) {
 		console.error("Error finding user:", error);
@@ -392,43 +396,43 @@ export async function updateConnection(updateData) {
 			if (updateData.mail && !validate.isEmail(updateData.mail)) {
 				return { status: 400, message: "Invalid mail" };
 			}
-			connection.mail = updateData.mail
+			connection.mail = updateData.mail;
 		}
 
 		if (updateData.discord !== undefined) {
-			connection.discord = updateData.discord
+			connection.discord = updateData.discord;
 		}
 
 		if (updateData.phone !== undefined) {
-			connection.phone = updateData.phone
+			connection.phone = updateData.phone;
 		}
 
 		if (updateData.telegram !== undefined) {
-			connection.telegram = updateData.telegram
+			connection.telegram = updateData.telegram;
 		}
 
 		if (updateData.linkedin !== undefined) {
-			connection.linkedin = updateData.linkedin
+			connection.linkedin = updateData.linkedin;
 		}
 
 		if (updateData.wa_bis !== undefined) {
-			connection.wa_bis = updateData.wa_bis
+			connection.wa_bis = updateData.wa_bis;
 		}
 
 		if (updateData.viber !== undefined) {
-			connection.viber = updateData.viber
+			connection.viber = updateData.viber;
 		}
 
 		if (updateData.instagram !== undefined) {
-			connection.instagram = updateData.instagram
+			connection.instagram = updateData.instagram;
 		}
 
 		if (updateData.github !== undefined) {
-			connection.github = updateData.github
+			connection.github = updateData.github;
 		}
 
 		if (updateData.teams !== undefined) {
-			connection.teams = updateData.teams
+			connection.teams = updateData.teams;
 		}
 
 		if (updateData.usr_id !== undefined) {

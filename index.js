@@ -226,7 +226,7 @@ app.post("/api/upload/pfp", authenticateToken, async (req, res) => {
 		}
 
 		const base64Data = matches[2];
-		const filePath = path.join(__dirname, "pictures", `${user_id}.png`);
+		const filePath = "./pictures" + `${user_id}.png`;
 
 		fs.mkdirSync(path.dirname(filePath), { recursive: true }); // Ensure directory exists
 
@@ -327,7 +327,7 @@ app.post("/api/get/connection", authenticateToken, async (req, res) => {
 	if (!usrid) {
 		return res.send(400);
 	}
-
+	console.log(usrid);
 	res.json(await dbUtil.getConnectionFromUserID(usrid));
 });
 

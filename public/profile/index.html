@@ -95,6 +95,8 @@
 		<script src="/js/sessionCheck.js"></script>
 		<script>
 			async function getConnections() {
+				const urlParams = new URLSearchParams(window.location.search);
+				const userId = urlParams.get("id");
 				let x = await fetch("/api/get/connection", {
 					method: "POST",
 					headers: {
@@ -102,16 +104,12 @@
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
-						user_id: localStorage.getItem("STAR_user_id"),
+						user_id: userId,
 					}),
 				});
 				if (x.status == 200) {
 					let f = await x.json();
-					Object.keys(f).forEach((key) => {
-						if (document.getElementById(key)) {
-							document.getElementById(key).value = f[key];
-						}
-					});
+					console.log(f);
 					return f;
 				} else {
 					hasConnection = false;
@@ -175,7 +173,12 @@
 								)
 									return;
 								const li = document.createElement("p");
-								li.textContent = `${key}: ${conn[key]}`;
+								if (key == "status") {
+									li.textContent =
+										"This user has no connections.";
+								} else {
+									li.textContent = `${key}: ${conn[key]}`;
+								}
 								document
 									.getElementById("content")
 									.appendChild(li);

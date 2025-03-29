@@ -114,7 +114,7 @@
 				instagram: { type: String },
 				github: { type: String },
 				teams: { type: String }, -->
-				<div>
+				<div id="connections">
 					<p>
 						Please put your handle on the platforms you can be
 						reached. STAR does not provide chat services and
@@ -175,6 +175,75 @@
 						Save
 					</button>
 				</div>
+				<div id="upload">
+					<p>Upload a new profile photo (PNG only):</p>
+					<input
+						type="file"
+						id="profilePhoto"
+						accept="image/png"
+					/><br /><br />
+					<button type="button" onclick="uploadProfilePhoto()">
+						Upload
+					</button>
+					<script>
+						async function uploadProfilePhoto() {
+							const fileInput =
+								document.getElementById("profilePhoto");
+							if (fileInput.files.length === 0) {
+								alert("Please select a file to upload.");
+								return;
+							}
+							const file = fileInput.files[0];
+							if (file.type !== "image/png") {
+								alert("Only PNG files are allowed.");
+								return;
+							}
+							const reader = new FileReader();
+							reader.onload = async function () {
+								const base64Image = reader.result.split(",")[1]; // Get base64 string
+								try {
+									const response = await fetch(
+										"/api/upload/pfp",
+										{
+											method: "POST",
+											headers: {
+												authorization:
+													localStorage.getItem(
+														"STAR_session_id"
+													),
+												"Content-Type":
+													"application/json",
+											},
+											body: JSON.stringify({
+												image: base64Image,
+											}),
+										}
+									);
+									if (response.status === 200) {
+										alert(
+											"Profile photo uploaded successfully!"
+										);
+										modal.style.display = "none";
+										getAccount(); // Refresh account details
+									} else {
+										alert(
+											"Failed to upload profile photo."
+										);
+									}
+								} catch (error) {
+									console.error(
+										"Error uploading profile photo:",
+										error
+									);
+									alert(
+										"An error occurred while uploading the profile photo."
+									);
+								}
+							};
+							reader.readAsDataURL(file); // Read file as base64
+						}
+					</script>
+				</div>
 			</div>
 		</div>
 	</body>
@@ -199,8 +268,15 @@
 				modal.style.display = "none";
 			}
 		};
+		async function uploadpfp() {
+			document.getElementById("myModal").style.display = "block";
+			document.getElementById("connections").style.display = "none";
+			document.getElementById("upload").style.display = "block";
+		}
 		async function asbsd() {
 			document.getElementById("myModal").style.display = "block";
+			document.getElementById("connections").style.display = "block";
+			document.getElementById("upload").style.display = "none";
 		}
 		async function saveExternalAccounts() {
 			let connections = {
@@ -292,8 +368,8 @@
 				<p>Account type: ${f.accountType}</p>
 				<p>Selected tags: ${JSON.parse(f.tags).join(", ")}</p>
 				<button>Edit account details</button>
-				<button id="myBtn" onclick="asbsd()">Link external accounts</button>
-				<button>Upload profile photo</button>
+				<button onclick="asbsd()">Link external accounts</button>
+				<button onclick="uploadpfp()">Upload profile photo</button>
 			</div>
 				`;
 		}
