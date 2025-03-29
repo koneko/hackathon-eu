@@ -216,6 +216,17 @@
 			};
 			console.log(connections);
 		}
+		async function getConnections() {
+			let x = await fetch("/api/get/connections", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					user_id: localStorage.getItem("STAR_user_id"),
+				}),
+			});
+		}
 		async function getAccount() {
 			let x = await fetch("/api/getAccountByID", {
 				method: "POST",
