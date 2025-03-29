@@ -105,6 +105,15 @@ app.post("/api/getAccount", async (req, res) => {
 	return res.send(400);
 });
 
+app.post("/api/getAccountByID", async (req, res) => {
+	let usr_id = req.body.user_id; // {"mail": "mail@gmail.com"}
+	let usr = await dbUtil.findUserById(usr_id);
+	if (!!usr) {
+		return res.json(usr);
+	}
+	return res.send(400);
+});
+
 app.post("/api/updateAccount", authenticateToken, async (req, res) => {
 	let user_id = req.body.user_id;
 	let updateData = req.body.updateData;
