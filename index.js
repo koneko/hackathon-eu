@@ -8,7 +8,7 @@ const port = process.env.port || 3000;
 async function authenticateToken(req, res, next) {
 	let token = req.headers?.authorization;
 	if (!token || !(await dbUtil.validateSessionToken(token))) {
-		return res.redirect("/account/login");
+		return res.sendStatus(403);
 	}
 	next();
 }
@@ -147,7 +147,7 @@ app.post("/api/verify/mailcode", async (req, res) => {
 	let mail_code = req.body.mail?.mail_code;
 	let user_id = req.body.mail?.user_id;
 
-	if(!mail_code || !user_id) {
+	if (!mail_code || !user_id) {
 		return res.send(400);
 	}
 
@@ -319,11 +319,11 @@ app.post("/api/get/profils", authenticateToken, async (req, res) => {
 	let limit = req.body?.limit;
 	let profileType = req.body?.profileType;
 
-	if(!limit || !profileType) {
+	if (!limit || !profileType) {
 		return res.send(400);
 	}
 
-	if(limit > 100) {
+	if (limit > 100) {
 		return res.send(400);
 	}
 
