@@ -6,7 +6,6 @@ const profilSchema = new mongoose.Schema({
     title: { type: String },
     desc: { type: String },
     profileType: { type: String },
-    tags: { type: String },
     created_at: { type: Date, default: Date.now },
     usr_id: { type: String, ref: 'User' }, // Reference to User model
 });

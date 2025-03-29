@@ -479,7 +479,7 @@ export async function getProfilFromUserID(userID) {
 	}
 }
 
-export async function createProfil(userid, title, desc, profileType, tags) {
+export async function createProfil(userid, title, desc, profileType) {
 	try {
 		const profil = await Profil.findOne({ usr_id: userid });
 
@@ -491,8 +491,7 @@ export async function createProfil(userid, title, desc, profileType, tags) {
 			title: sanitizeHTML(title),
 			desc: sanitizeHTML(desc),
 			profileType: sanitizeHTML(profileType),
-			tags: JSON.stringify(sanitizeList(tags)),
-			usr_id: connectionData.usr_id,
+			usr_id: userid,
 		});
 
 		await newProfil.save();
@@ -521,10 +520,6 @@ export async function updateProfil(updateData) {
 
 		if (updateData.profileType !== undefined) {
 			profil.profileType = sanitizeHTML(updateData.profileType);
-		}
-
-		if (updateData.tags !== undefined) {
-			profil.tags = JSON.stringify(sanitizeList(updateData.tags));
 		}
 
 		await profil.save();
