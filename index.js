@@ -304,8 +304,6 @@ app.post("/api/make/profil", authenticateToken, async (req, res) => {
 			updateData.userid,
 			updateData.title,
 			updateData.desc,
-			updateData.profileType,
-			updateData.tags
 		);
 		if (!upd) {
 			return res.send(400);
