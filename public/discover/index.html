@@ -36,6 +36,26 @@
 			button:hover {
 				background-color: rgb(45, 140, 185);
 			}
+
+			.sigma {
+				width: 100%;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 15px;
+			}
+			.sigma > div {
+				display: inline-block;
+				width: auto;
+				white-space: nowrap;
+				height: 250px;
+				margin: 10px;
+				padding: 15px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+				border-radius: 10px;
+				background-color: #ffffff;
+				vertical-align: top;
+			}
 		</style>
 	</head>
 	<body>
@@ -50,7 +70,80 @@
 				<a href="/account" id="account-label">Account</a>
 			</li>
 		</ul>
-		<main id="main"></main>
+		<main id="main">
+			<input
+				type="text"
+				id="myInput"
+				onkeyup="filterTags()"
+				placeholder="Search for tags..."
+			/>
+			<select id="acctype" onchange="getProfils(this.value)">
+				<option value="Student">Student</option>
+				<option value="Teacher">Teacher</option>
+			</select>
+			<div class="sigma"></div>
+		</main>
 	</body>
 	<script src="/js/sessionCheck.js"></script>
+	<script src="/js/getProfilePhoto.js"></script>
+	<script>
+		function filterTags() {
+			const input = document.getElementById("myInput");
+			const filter = input.value.toLowerCase();
+			const elements =
+				document.getElementsByClassName("sigma")[0].children;
+
+			for (let i = 0; i < elements.length; i++) {
+				const element = elements[i];
+				const tags = element.className.toLowerCase();
+				const formattedFilter = filter.replace(/\s+/g, "_");
+				if (tags.includes(formattedFilter)) {
+					element.style.display = "";
+				} else {
+					element.style.display = "none";
+				}
+			}
+		}
+		async function getProfils(type) {
+			document.getElementsByClassName("sigma")[0].innerHTML = "";
+			let x = await fetch("/api/get/profils", {
+				method: "POST",
+				headers: {
+					authorization: localStorage.getItem("STAR_session_id"),
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					limit: 100,
+					profileType: type,
+				}),
+			});
+			if (x.status == 200) {
+				let f = await x.json();
+				console.log(f);
+				f.forEach(async (item) => {
+					let element = document.createElement("div");
+					element.innerHTML = `
+					<img
+			src="${await getProfilePhoto(localStorage.getItem("STAR_user_id"))}"
+			width="64"
+			height="64"
+			style="
+				border-radius: 50%;
+				border: 2.5px solid #000;"/>
+					<a href='/profile?id=${item.user_data[0].usr_id}'>${item.user_data[0].ime}</a>
+					<h1><a href='/profile?id=${item.user_data[0].usr_id}'>${item.title}</a></h1>
+					<h3>${item.desc.substr(0, 24) + "..."}</h3>
+					<p>${JSON.parse(item.user_data[0].tags).join(", ")}</p>
+					`;
+					JSON.parse(item.user_data[0].tags).forEach((i) => {
+						element.classList.add(i.replace(/\s+/g, "_"));
+					});
+					document
+						.getElementsByClassName("sigma")[0]
+						.appendChild(element);
+				});
+			}
+		}
+		getProfils("Student");
+	</script>
 </html>

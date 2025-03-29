@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Students & Teachers Achieving Results</title>
+		<link rel="stylesheet" href="/css/navbar.css" />
+		<link rel="stylesheet" href="/css/general.css" />
+		<script
+			src="https://kit.fontawesome.com/11fc85fa63.js"
+			crossorigin="anonymous"
+		></script>
+		<link
+			rel="icon"
+			href="https://hub.koneko.link/cdn/icons/blue.png"
+			type="image/gif"
+			sizes="16x16"
+		/>
+		<meta property="og:title" content="Fill later." />
+		<meta name="description" content="Fill later." />
+		<meta property="og:description" content="Fill later." />
+		<meta property="og:site_name" content="Fill later." />
+		<meta name="twitter:card" content="Fill later." />
+		<meta property="twitter:title" content="Fill later." />
+		<style>
+			#myUL {
+				max-width: 1200px;
+				list-style-type: none;
+				padding: 0;
+				margin: auto;
+				text-align: center;
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+				gap: 10px;
+				margin-top: 10px;
+			}
+			#myUL > li {
+				/* like a badge */
+				background-color: rgb(59, 179, 235);
+				color: white;
+				width: 150px;
+				height: 50px;
+				padding: 10px;
+				border-radius: 10px;
+				font-size: 14px;
+				text-align: center;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				cursor: pointer;
+			}
+			#myUL > li > a {
+				color: white;
+			}
+			input {
+				color: black;
+				width: 300px;
+				height: 30px;
+				padding: 5px;
+				border: 1px solid #000;
+				border-radius: 5px;
+				margin-bottom: 10px;
+			}
+			button {
+				color: white;
+				background-color: rgb(59, 179, 235);
+				border: none;
+				padding: 10px 20px;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 14px;
+			}
+			button:hover {
+				background-color: rgb(45, 140, 185);
+			}
+		</style>
+	</head>
+	<body>
+		<ul class="navbar">
+			<li>
+				<a href="/" style="font-weight: bold"
+					>Students & Teachers Achieving Results</a
+				>
+			</li>
+			<li><a href="/discover">Discover</a></li>
+			<li style="float: right">
+				<a href="/account" id="account-label">Account</a>
+			</li>
+		</ul>
+		<main id="main">
+			<div id="content"></div>
+		</main>
+		<script src="/js/getProfilePhoto.js"></script>
+		<script src="/js/sessionCheck.js"></script>
+		<script>
+			async function getConnections() {
+				let x = await fetch("/api/get/connection", {
+					method: "POST",
+					headers: {
+						authorization: localStorage.getItem("STAR_session_id"),
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						user_id: localStorage.getItem("STAR_user_id"),
+					}),
+				});
+				if (x.status == 200) {
+					let f = await x.json();
+					Object.keys(f).forEach((key) => {
+						if (document.getElementById(key)) {
+							document.getElementById(key).value = f[key];
+						}
+					});
+					return f;
+				} else {
+					hasConnection = false;
+				}
+			}
+			async function getUserProfile() {
+				const urlParams = new URLSearchParams(window.location.search);
+				const userId = urlParams.get("id");
+				let x = await fetch("/api/get/profil", {
+					method: "POST",
+					headers: {
+						authorization: localStorage.getItem("STAR_session_id"),
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						user_id: userId,
+					}),
+				});
+				if (x.status == 404) {
+					alert("This user does not have a profile.");
+					window.location.href = "/discover";
+				} else if (x.status == 200) {
+					let xx = await x.json();
+					console.log(xx);
+					let sx = await fetch("/api/getAccountByID", {
+						method: "POST",
+						headers: {
+							authorization:
+								localStorage.getItem("STAR_session_id"),
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							user_id: userId,
+						}),
+					});
+					if (sx.status == 200) {
+						let ff = await sx.json();
+
+						document.getElementById("content").innerHTML = `
+						<img
+			src="${await getProfilePhoto(localStorage.getItem("STAR_user_id"))}"
+			width="128"
+			height="128"
+			style="
+				border-radius: 50%;
+				border: 2.5px solid #000;"/>
+					<h1>${xx.title}</h1>
+					<p>${xx.desc}</p>
+					`;
+						let conn = await getConnections();
+						console.log(conn);
+						if (conn) {
+							Object.keys(conn).forEach((key) => {
+								if (
+									key == "_id" ||
+									key == "usr_id" ||
+									key == "con_id" ||
+									key == "created_at" ||
+									key == "__v" ||
+									conn[key] == null
+								)
+									return;
+								const li = document.createElement("p");
+								li.textContent = `${key}: ${conn[key]}`;
+								document
+									.getElementById("content")
+									.appendChild(li);
+							});
+						}
+					}
+				}
+			}
+			getUserProfile();
+		</script>
+	</body>
+</html>
