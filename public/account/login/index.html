@@ -25,13 +25,13 @@
 		<meta property="twitter:title" content="Fill later." />
 		<style>
 			#myUL {
-				width: 900px;
+				max-width: 1200px;
 				list-style-type: none;
-				/* padding: 0; */
+				padding: 0;
 				margin: auto;
 				text-align: center;
-				display: flex;
-				flex-direction: row;
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 				gap: 10px;
 				margin-top: 10px;
 			}
@@ -44,10 +44,35 @@
 				padding: 10px;
 				border-radius: 10px;
 				font-size: 14px;
+				text-align: center;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 				cursor: pointer;
 			}
 			#myUL > li > a {
 				color: white;
+			}
+			input {
+				color: black;
+				width: 300px;
+				height: 30px;
+				padding: 5px;
+				border: 1px solid #000;
+				border-radius: 5px;
+				margin-bottom: 10px;
+			}
+			button {
+				color: white;
+				background-color: rgb(59, 179, 235);
+				border: none;
+				padding: 10px 20px;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 14px;
+			}
+			button:hover {
+				background-color: rgb(45, 140, 185);
 			}
 		</style>
 	</head>
@@ -116,17 +141,21 @@
 				})
 					.then((res) => res.json())
 					.then((res) => {
-						localStorage.setItem("STAR_session_id", res.session_id);
+						localStorage.setItem(
+							"STAR_session_id",
+							res.authorization
+						);
 					});
 			}
 			function tag(tag) {
+				let element = document.getElementById(tag);
 				if (tags.includes(tag)) {
 					tags = tags.filter((t) => t !== tag);
-					this.style.backgroundColor = "rgb(59, 179, 235)";
+					element.style.backgroundColor = "rgb(59, 179, 235)";
 				} else {
 					if (tags.length < 10) {
+						element.style.backgroundColor = "red";
 						tags.push(tag);
-						this.style.backgroundColor = "pink";
 					} else {
 						alert("You can only select up to 10 tags.");
 					}
@@ -202,12 +231,13 @@
 								<br>
 							<ul id="myUL">
 							</ul>
+							<br>
 							<button onclick='createAccount()'>Finish</button>
 							`;
 						x.forEach((tag) => {
 							document.getElementById(
 								"myUL"
-							).innerHTML += `<li onclick='tag("${tag}")'><a>${tag}</a></li>`;
+							).innerHTML += `<li onclick='tag("${tag}")' id='${tag}'><a>${tag}</a></li>`;
 						});
 					} else {
 						let json = await req.json();
