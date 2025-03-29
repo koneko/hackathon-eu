@@ -253,6 +253,9 @@ export async function updateUser(userId, updateData) {
 		}
 
 		if (updateData.pfp !== undefined) {
+			if(new TextEncoder().encode(updateData.pfp).length > 15 * 1024 * 1024) {
+				return { status: 400, message: "Invalid pfp size" };
+			}
 			user.pfp = updateData.pfp;
 		}
 
