@@ -23,6 +23,29 @@
 		<meta property="og:site_name" content="Fill later." />
 		<meta name="twitter:card" content="Fill later." />
 		<meta property="twitter:title" content="Fill later." />
+		<style>
+			.sigma {
+				width: 1900px;
+				height: 1000px;
+				text-align: left;
+				/* border: 2px solid #000; */
+				/* border-radius: 10px; */
+				margin: 20px auto;
+				/* background-color: #f0f0f0; */
+			}
+			button {
+				color: white;
+				background-color: rgb(59, 179, 235);
+				border: none;
+				padding: 10px 20px;
+				border-radius: 5px;
+				cursor: pointer;
+				font-size: 14px;
+			}
+			button:hover {
+				background-color: rgb(45, 140, 185);
+			}
+		</style>
 	</head>
 	<body>
 		<ul class="navbar">
@@ -36,12 +59,41 @@
 				<a href="/account" id="account-label">Account</a>
 			</li>
 		</ul>
-		<main></main>
+		<main id="main">Please login.</main>
 	</body>
 	<script src="/js/sessionCheck.js"></script>
+	<script src="/js/getProfilePhoto.js"></script>
 	<script>
 		async function getAccount() {
-			let x = await fetch("/api/getAccountByid");
+			let x = await fetch("/api/getAccountByID", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					user_id: localStorage.getItem("STAR_user_id"),
+				}),
+			});
+			let f = await x.json();
+			console.log(f);
+			document.getElementById("main").innerHTML = `
+			<div class="sigma">
+				<img
+			src="${await getProfilePhoto(localStorage.getItem("STAR_user_id"))}"
+			width="128"
+			height="128"
+			style="
+				border-radius: 50%;
+				border: 2.5px solid #000;"/>
+				<h1>${f.ime} ${f.prezime}</h1>
+				<p>Account type: ${f.accountType}</p>
+				<p>Selected tags: ${JSON.parse(f.tags).join(", ")}</p>
+				<button>Edit account details</button>
+				<button>Link external accounts</button>
+				<button>Upload profile photo</button>
+			</div>
+				`;
 		}
+		getAccount();
 	</script>
 </html>
