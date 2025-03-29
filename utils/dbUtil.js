@@ -75,7 +75,7 @@ async function sendEmail(recipient, subject, mail_code) {
 	}
 }
 
-function isDateMoreThan5MinutesOld(date) {
+function isDateMoreThan1DayOld(date) {
 	if (!(date instanceof Date)) {
 		throw new Error("Input must be a Date object.");
 	}
@@ -130,7 +130,7 @@ export async function createSession(user) {
 		return error;
 	}
 
-	if (!sendEmail(mail, "Account Verification", mail_code.toString())) {
+	if (!sendEmail(mail, "STAR Account Verification", mail_code.toString())) {
 		return null;
 	}
 
@@ -156,7 +156,7 @@ export async function validateEmailCode(userID, code) {
 		}
 
 		if (isDateMoreThan5MinutesOldFrthisTime(foundSession.created_at)) {
-			removeSession(foundSession);
+			await removeSession(foundSession);
 			return false;
 		}
 
@@ -177,8 +177,8 @@ export async function session2userID(token) {
 			return false;
 		}
 
-		if (isDateMoreThan5MinutesOld(foundSession.created_at)) {
-			removeSession(foundSession);
+		if (isDateMoreThan1DayOld(foundSession.created_at)) {
+			await removeSession(foundSession);
 			return false;
 		}
 
@@ -199,8 +199,8 @@ export async function validateSessionToken(token) {
 			return false;
 		}
 
-		if (isDateMoreThan5MinutesOld(foundSession.created_at)) {
-			removeSession(foundSession);
+		if (isDateMoreThan1DayOld(foundSession.created_at)) {
+			await removeSession(foundSession);
 			return false;
 		}
 
